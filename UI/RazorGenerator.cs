@@ -15,7 +15,7 @@ namespace UI
         {
             if (engine is null)
             {
-                string path  = Path.Combine(Directory.GetCurrentDirectory(), @"UI\Views");
+                string path  = Path.Combine(Directory.GetCurrentDirectory(), @"UI\wwwroot\Views");
 
                 engine = new RazorLightEngineBuilder()
                         .UseFilesystemProject(path)

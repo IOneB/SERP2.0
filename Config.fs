@@ -7,6 +7,7 @@ open Microsoft.AspNetCore.Builder
 open ElectronNET.API
 open SERP.Entities
 open System.IO
+open UI
 
 let current = Directory.GetCurrentDirectory()
 let webRoot = Path.Combine(current, @"UI\wwwroot")
@@ -16,9 +17,15 @@ let errorHandler (ex : Exception) (logger : ILogger) =
     clearResponse
     >=> ServerErrors.INTERNAL_ERROR ex.Message
 
+let time() = System.DateTime.Now.ToString()
+let razor = RazorGenerator.GenerateView
+let razorView page model : HttpHandler =
+    razor (page, model)
+    |> htmlString
+
 let webApp : HttpHandler = choose[
-    route "/" >=> text (Directory.GetCurrentDirectory())
-    ]
+    route "/test"      >=> warbler (fun _-> (razorView "index.cshtml" (time())))
+]
 
 let configureServices(services: IServiceCollection) =
     services.AddMvc() |> ignore
@@ -26,6 +33,7 @@ let configureServices(services: IServiceCollection) =
 
 let configureApp(app: IApplicationBuilder) =
     app.UseMvc(fun routes -> routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}") |> ignore) |> ignore
+
     Electron.WindowManager.CreateWindowAsync()|> Async.AwaitTask |> ignore
     app.UseGiraffeErrorHandler(errorHandler)
         .UseStaticFiles()
