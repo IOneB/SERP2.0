@@ -9,13 +9,13 @@ namespace UI
 {
     public class RazorGenerator
     {
-        static RazorLightEngine engine;
+        static readonly RazorLightEngine engine;
 
         static RazorGenerator()
         {
             if (engine is null)
             {
-                string path  = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, @"UI\Views");
+                string path  = Path.Combine(Directory.GetCurrentDirectory(), @"UI\Views");
 
                 engine = new RazorLightEngineBuilder()
                         .UseFilesystemProject(path)

@@ -9,14 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Program.fs" />
+    <Compile Include="Config.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="ElectronNET.API" Version="0.0.9" />
     <PackageReference Include="ElectronNET.CLI" Version="0.0.9" />
     <PackageReference Include="Giraffe" Version="3.6.0" />
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
