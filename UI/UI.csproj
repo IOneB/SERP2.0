@@ -6,8 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Views\index.cshtml" />
-    <None Remove="Views\_Layout.cshtml" />
+    <Compile Remove="Views\**" />
+    <EmbeddedResource Remove="Views\**" />
+    <None Remove="Views\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="wwwroot\test.cshtml" />
     <None Remove="wwwroot\Views\carusel.cshtml" />
     <None Remove="wwwroot\Views\index.cshtml" />
@@ -15,9 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Views\index.cshtml" />
-    <Content Include="Views\_Layout.cshtml" />
-    <Content Include="wwwroot\Views\carusel.cshtml" />
     <Content Include="wwwroot\Views\test.cshtml" />
     <Content Include="wwwroot\Views\index.cshtml" />
     <Content Include="wwwroot\Views\_Layout.cshtml" />

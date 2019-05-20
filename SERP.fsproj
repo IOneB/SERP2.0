@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Actions.fs" />
+    <Compile Include="Repository.fs" />
+    <Compile Include="Handlers.fs" />
+    <Compile Include="Routers.fs" />
     <Compile Include="Config.fs" />
   </ItemGroup>
 
@@ -16,6 +20,7 @@
     <PackageReference Include="ElectronNET.API" Version="0.0.9" />
     <PackageReference Include="ElectronNET.CLI" Version="0.0.9" />
     <PackageReference Include="Giraffe" Version="3.6.0" />
+    <PackageReference Include="Giraffe.Razor" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.0" />
   </ItemGroup>
 
