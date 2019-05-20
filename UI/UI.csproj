@@ -19,17 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="wwwroot\Views\test.cshtml" />
     <Content Include="wwwroot\Views\index.cshtml" />
     <Content Include="wwwroot\Views\_Layout.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="RazorLight" Version="2.0.0-beta1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\Views\Components\" />
   </ItemGroup>
 
 </Project>
