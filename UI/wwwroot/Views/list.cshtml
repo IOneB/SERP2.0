@@ -1,0 +1,13 @@
+﻿@using RazorLight
+@using SERP.Entities
+@inherits TemplatePage<IEnumerable<User>>
+
+@{
+    Layout = "_Layout";
+}
+
+
+@foreach(var item in Model)
+{
+    <p>@item.ToString()</p>
+}

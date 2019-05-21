@@ -4,6 +4,7 @@ open Microsoft.Extensions.Logging
 open Giraffe
 open System
 open Microsoft.AspNetCore.Builder
+open Microsoft.AspNetCore.Authentication.Cookies
 open ElectronNET.API
 open SERP.Entities
 open System.IO
@@ -11,11 +12,17 @@ open UI
 open Giraffe.Razor
 open Microsoft.AspNetCore.Mvc.ModelBinding
 open Actions
+open DbContext
 
+let cookieOptions = fun (options:CookieAuthenticationOptions) -> 
+    options.LoginPath <- new Microsoft.AspNetCore.Http.PathString "/user/login"
 
 let configureServices(services: IServiceCollection) =
     services.AddRazorEngine (viewsDirectory) |> ignore
     services.AddMvc() |> ignore
+    services.AddAuthentication(authScheme)
+        .AddCookie(cookieOptions) |> ignore
+    services.AddDbContext<UserContext>() |> ignore
     services.AddGiraffe() |> ignore
 
 let configureApp(app: IApplicationBuilder) =
@@ -24,6 +31,7 @@ let configureApp(app: IApplicationBuilder) =
     Electron.WindowManager.CreateWindowAsync()|> Async.AwaitTask |> ignore
     app.UseGiraffeErrorHandler(errorHandler)
         .UseStaticFiles()
+        .UseAuthentication()
         .UseGiraffe Routers.webApp
 
 let configureLogging (builder : ILoggingBuilder) =

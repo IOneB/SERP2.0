@@ -8,4 +8,8 @@
     <Compile Include="Models.fs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Giraffe" Version="3.6.0" />
+  </ItemGroup>
+
 </Project>

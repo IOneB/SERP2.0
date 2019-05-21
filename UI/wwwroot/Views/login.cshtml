@@ -1,0 +1,20 @@
+﻿@using RazorLight
+@inherits TemplatePage<String>
+
+@{
+    Layout = "_Layout";
+}
+
+    <form action="/user/register" method="post">
+        <label>логин</label>
+        <input type="text" name="UserName" />
+        <label>пароль</label>
+        <input type="password" name="Password" />
+        <label>еще раз пароль</label>
+        <input type="password" name="ConfirmPassword" />
+        <input type="submit" />
+        <input name="Group"/>
+        <input type="checkbox" name="IsTeacher" checked="checked"/>
+        <input name="TeacherCode" />
+        <input name="Name" />
+    </form>

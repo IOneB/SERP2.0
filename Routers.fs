@@ -3,34 +3,37 @@
 open Giraffe
 open Handlers
 open Actions
+open SERP.Entities
+open Repository
 
 let adminRouter = subRoute "/admin" (choose [
-    adminRoute "/manage"           >=> setStatusCode 200  >=> text "aaa"
+    adminRoute "/manage"               >=> setStatusCode 200  >=> text "aaa"
     adminRoute "/home"                 >=> htmlFile "/pages/index.html" 
     adminRoute "/time"                 >=> warbler (fun _-> textAndLog (time()) "aaa")
     adminRoute "/download_result"      >=> text "manage"
     ])
 
 let userRouter = subRoute "/user" (choose [
-    userRoute "/login"             >=> setStatusCode 200  >=> text "aaa"
-    userRoute "/home"              >=> htmlFile "/pages/index.html" 
+    route "/login"                 >=> warbler (fun _-> (None |> razorView "login.cshtml"))
+    userRoute "/home"              >=> warbler (fun (next, ctx) -> (allUsers(next, ctx)) |> razorView "list.cshtml" )
+    userRoute "/logout"            >=> logoutHandler
     userRoute "/time"              >=> warbler (fun _-> textAndLog (time()) "aaa")
     userRoute "/download_result"   >=> text "manage"
     ])
 
-let postRouter = subRoute "/" (choose[
-
-    ])
+let postRouter = choose[
+        route "/user/login"                 >=> loginHandler 
+        route "/user/register"              >=> registerHandler
+    ]
 
 let webApp : HttpHandler =
     choose [
         GET >=> choose [
-            warbler (fun _-> (razorView "index.cshtml" (time())))
+            route "/"           >=> redirectTo false "/user/home"
             adminRouter
             userRouter
             route "/tutorial"   >=> text "tutorial"
             route "/recommend"  >=> text "recommend"
-            route "/test"      >=> warbler (fun _-> (razorView "index.cshtml" (time())))
         ]
 
         POST >=> choose [

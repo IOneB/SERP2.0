@@ -2,9 +2,22 @@
 
 open Giraffe
 open DbContext
+open SERP.Entities
+open SERP.Entities.Default
+open Actions
+open Microsoft.AspNetCore.Http
 
-let anyUsers : HttpHandler = 
-    use context = new UserContext()
-    if Seq.isEmpty context.Users then "none"
-    else "not none"
-    |> text
+let allUsers = (fun (next, context:HttpContext) -> 
+    let db = context.GetService<UserContext>()
+    [for i in db.Users -> i])
+    
+
+let checkUserByName (context:HttpContext) userName = 
+    let db = context.GetService<UserContext>()
+    Seq.exists (fun user -> user.UserName = userName) db.Users 
+
+let createUser (context:HttpContext) (model : RegisterModel) = 
+    let db = context.GetService<UserContext>()
+    let newUser = {defaultUser with UserName = model.UserName; Password = model.Password; Name = model.Name; Group = model.Group; Role = setRole model.TeacherCode }
+    db.Users.Add(newUser) |> ignore
+    db.SaveChanges true

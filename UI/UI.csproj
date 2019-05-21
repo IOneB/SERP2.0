@@ -15,16 +15,24 @@
     <None Remove="wwwroot\test.cshtml" />
     <None Remove="wwwroot\Views\carusel.cshtml" />
     <None Remove="wwwroot\Views\index.cshtml" />
+    <None Remove="wwwroot\Views\list.cshtml" />
+    <None Remove="wwwroot\Views\login.cshtml" />
     <None Remove="wwwroot\Views\_Layout.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="wwwroot\Views\list.cshtml" />
+    <Content Include="wwwroot\Views\login.cshtml" />
     <Content Include="wwwroot\Views\index.cshtml" />
     <Content Include="wwwroot\Views\_Layout.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="RazorLight" Version="2.0.0-beta1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Entities\Entities.fsproj" />
   </ItemGroup>
 
 </Project>

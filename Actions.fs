@@ -9,6 +9,10 @@ open DbContext
 open UI
 open System.IO
 open Microsoft.AspNetCore.Mvc.ModelBinding
+open Microsoft.AspNetCore.Authentication
+open Microsoft.AspNetCore.Authentication.Cookies
+open System.Security.Claims
+open System.Globalization
 
 let time() = System.DateTime.Now.ToString()
 
@@ -18,12 +22,11 @@ let currentDirectory = Directory.GetCurrentDirectory()
 let webRoot = Path.Combine(currentDirectory, @"UI\wwwroot")
 let viewsDirectory = Path.Combine(webRoot, @"Views")
 
+let authScheme = CookieAuthenticationDefaults.AuthenticationScheme
+
 let mustBeLoggedIn : HttpFunc->HttpContext->HttpFuncResult = 
     let notLoggedIn =
-        RequestErrors.UNAUTHORIZED
-            "Basic"
-            "Some Realm"
-            "You must be logged in."
+        text "pls login"
     requiresAuthentication notLoggedIn
 
 let mustBeAdmin : HttpFunc->HttpContext->HttpFuncResult = 
@@ -38,3 +41,10 @@ let errorHandler (ex : Exception) (logger : ILogger) =
     >=> ServerErrors.INTERNAL_ERROR ex.Message
 
 let modelState = ModelStateDictionary()
+
+let russian = CultureInfo.CreateSpecificCulture("ru-ru")
+let parsingError (err : string) = RequestErrors.BAD_REQUEST err
+
+let setRole = function 
+    |Some "f4df6a5d99" -> "Admin"
+    |_ -> "User"
