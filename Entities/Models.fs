@@ -39,12 +39,24 @@ type [<CLIMutable>] RegisterModel =
             | Some msg -> Error (RequestErrors.badRequest (text msg))
             | None     -> Ok this
 
-type [<CLIMutable>] LoginModel = {
+type [<CLIMutable>] LoginModel = 
+    {
     [<Required(ErrorMessage="Не указано имя пользователя")>]
     UserName : string
     [<Required(ErrorMessage="Не указан пароль")>]
     Password : string
-}
+    }
+
+    member this.HasErrors() =
+        if      this.UserName.Length = 0                then Some "Введите имя пользователя."
+        else if this.Password.Length = 0                then Some "Введите пароль."
+        else None
+
+    interface IModelValidation<LoginModel> with
+        member this.Validate() =
+            match this.HasErrors() with
+            | Some msg -> Error (RequestErrors.badRequest (text msg))
+            | None     -> Ok this
 
 type [<CLIMutable>] User = { UserID:int;Name:string; Password:string; UserName: string; Role : string; Group : string}
 //and [<CLIMutable>] Product = { ProductId:int; CompanyId:int; Company: Company } 

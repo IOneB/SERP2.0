@@ -22,8 +22,8 @@ let userRouter = subRoute "/user" (choose [
     ])
 
 let postRouter = choose[
-        route "/user/login"                 >=> loginHandler 
-        route "/user/register"              >=> registerHandler
+        route "/user/login"                 >=> tryBindForm<LoginModel> parsingError (Some russian) (validateModel loginHandler) //TODO: в следующем слое проверить статус и сайнин
+        route "/user/register"              >=> tryBindForm<RegisterModel> parsingError (Some russian) (validateModel registerHandler) >=> redirectTo false "/user/login" 
     ]
 
 let webApp : HttpHandler =

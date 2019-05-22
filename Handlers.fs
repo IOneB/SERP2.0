@@ -8,7 +8,6 @@ open FSharp.Control.Tasks.V2
 open Microsoft.Extensions.Logging
 open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Authentication
-open Microsoft.AspNetCore.Authentication.Cookies
 open System.Security.Claims
 
 let userRoute routequery = route routequery >=> mustBeLoggedIn
@@ -27,41 +26,35 @@ let textAndLog txt log : HttpHandler =
                 return! ctx.WriteTextAsync txt
             })
 
-let loginHandler =
+let loginHandler (model : LoginModel) =
     fun (next : HttpFunc) (ctx : HttpContext) ->
-        task {
-            let issuer = "SERP"
-            let claims =
-                [
-                    Claim(ClaimTypes.Name, "John",  ClaimValueTypes.String, issuer)
-                    Claim(ClaimTypes.Role, "User", ClaimValueTypes.String, issuer)
-                ]
-            let identity = ClaimsIdentity(claims, authScheme)
-            let user     = ClaimsPrincipal(identity)
+        task{
+            let user = getUserByName model.UserName
+            match user with
+                |Some value when value.Password = model.Password -> 
+                    let issuer = "SERP"
+                    let claims =
+                        [
+                            Claim(ClaimTypes.Name, value.UserName,  ClaimValueTypes.String, issuer)
+                            Claim(ClaimTypes.Role, value.Role, ClaimValueTypes.String, issuer)
+                        ]
+                    let identity = ClaimsIdentity(claims, authScheme)
+                    let user     = ClaimsPrincipal(identity)
 
-            do! ctx.SignInAsync(authScheme, user)
-
-            return! text "Successfully logged in" next ctx
+                    do! ctx.SignInAsync(authScheme, user)
+                    return! text "Successfully logged in" next ctx 
+                | _ -> return! parsingError "Неверный логин или пароль" next ctx
         }
+    
 
-let registerHandler =
-    fun (next : HttpFunc) (ctx : HttpContext) ->
-        task {
-            let! result = ctx.TryBindFormAsync<RegisterModel>()
-
-            return! 
-                (match result with
-                    | Ok model when (model.HasErrors()) = None -> 
-                        if checkUserByName ctx model.UserName then 
-                            text "такой юзер уже есть"
-                        else 
-                            let checkSave = function 
-                                | -1 -> text "-1"
-                                | _ -> loginHandler
-                            checkSave (createUser ctx model)
-                    | Error err -> RequestErrors.BAD_REQUEST err
-                    | Ok model -> RequestErrors.BAD_REQUEST (model.HasErrors())) next ctx
-        }
+let registerHandler (model : RegisterModel ) =  
+    if checkUserByName model.UserName then 
+        (parsingError "Пользователь с таким именем уже существует")
+    else 
+        let checkSave = function 
+            | -1 -> parsingError "Some shit happens" 
+            | _ -> text "All good"
+        (checkSave (createUser model))
 
 let userHandler =
     fun (next : HttpFunc) (ctx : HttpContext) ->

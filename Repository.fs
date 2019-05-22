@@ -7,17 +7,18 @@ open SERP.Entities.Default
 open Actions
 open Microsoft.AspNetCore.Http
 
-let allUsers = (fun (next, context:HttpContext) -> 
-    let db = context.GetService<UserContext>()
-    [for i in db.Users -> i])
-    
+let db = new UserContext()
 
-let checkUserByName (context:HttpContext) userName = 
-    let db = context.GetService<UserContext>()
+let allUsers = (fun _ -> 
+    [for i in db.Users -> i])
+
+let checkUserByName userName = 
     Seq.exists (fun user -> user.UserName = userName) db.Users 
 
-let createUser (context:HttpContext) (model : RegisterModel) = 
-    let db = context.GetService<UserContext>()
+let getUserByName userName =
+    Seq.tryFind (fun user -> user.UserName = userName) db.Users
+
+let createUser (model : RegisterModel) = 
     let newUser = {defaultUser with UserName = model.UserName; Password = model.Password; Name = model.Name; Group = model.Group; Role = setRole model.TeacherCode }
     db.Users.Add(newUser) |> ignore
     db.SaveChanges true

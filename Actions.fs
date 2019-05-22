@@ -5,13 +5,10 @@ open Giraffe
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Logging
 open System
-open DbContext
 open UI
 open System.IO
 open Microsoft.AspNetCore.Mvc.ModelBinding
-open Microsoft.AspNetCore.Authentication
 open Microsoft.AspNetCore.Authentication.Cookies
-open System.Security.Claims
 open System.Globalization
 
 let time() = System.DateTime.Now.ToString()
