@@ -30,35 +30,39 @@ let loginHandler (model : LoginModel) =
     fun (next : HttpFunc) (ctx : HttpContext) ->
         task{
             let user = getUserByName model.UserName
-            match user with
-                |Some value when value.Password = model.Password -> 
-                    let issuer = "SERP"
-                    let claims =
-                        [
-                            Claim(ClaimTypes.Name, value.UserName,  ClaimValueTypes.String, issuer)
-                            Claim(ClaimTypes.Role, value.Role, ClaimValueTypes.String, issuer)
-                        ]
-                    let identity = ClaimsIdentity(claims, authScheme)
-                    let user     = ClaimsPrincipal(identity)
-
-                    do! ctx.SignInAsync(authScheme, user)
-                    return! text "Successfully logged in" next ctx 
-                | _ -> return! parsingError "Неверный логин или пароль" next ctx
+            let claimCookie value = 
+                let issuer = "SERP"
+                let claims =
+                    [
+                        Claim(ClaimTypes.Name, value.UserName,  ClaimValueTypes.String, issuer)
+                        Claim(ClaimTypes.Role, value.Role, ClaimValueTypes.String, issuer)
+                    ]
+                let identity = ClaimsIdentity(claims, authScheme)
+                let user     = ClaimsPrincipal(identity)
+                ctx.SignInAsync(authScheme, user).Start |> ignore 
+                text "Successfully logged in"
+            return! 
+                (match user with
+                    |Some value when value.Password = model.Password -> claimCookie value
+                    | _ -> parsingError "Неверный логин или пароль") next ctx
         }
     
 
 let registerHandler (model : RegisterModel ) =  
-    if checkUserByName model.UserName then 
-        (parsingError "Пользователь с таким именем уже существует")
-    else 
-        let checkSave = function 
-            | -1 -> parsingError "Some shit happens" 
-            | _ -> text "All good"
-        (checkSave (createUser model))
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+        task{
+            if checkUserByName model.UserName then 
+                return! parsingError "Пользователь с таким именем уже существует" next ctx
+            else 
+                let checkSave = function 
+                    | -1 -> parsingError "Some shit happens" 
+                    | _ -> text "All good"
+                return! checkSave (createUser model) next ctx
+        }
 
 let userHandler =
     fun (next : HttpFunc) (ctx : HttpContext) ->
-        text ctx.User.Identity.Name next ctx
+        task { return! text ctx.User.Identity.Name next ctx}
 
 let logoutHandler = 
     fun (next : HttpFunc) (ctx: HttpContext) ->
