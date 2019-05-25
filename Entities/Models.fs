@@ -5,22 +5,12 @@ open Giraffe
 
 type [<CLIMutable>] RegisterModel = 
     {
-    [<Required(ErrorMessage="Укажите имя пользователя")>]
-    [<MinLength(5)>]
-    UserName : string
-    [<Required(ErrorMessage="Не указан пароль")>]
-    [<MinLength(8)>]
-    [<DataType(DataType.Password)>]
-    Password : string
-    [<DataType(DataType.Password)>]
-    [<Compare("Password", ErrorMessage="Пароли должны совпадать")>]
-    ConfirmPassword : string
-    [<MinLength(4)>]
-    Name : string
-    [<MaxLength(7)>]
-    [<MinLength(3)>]
-    Group : string
-    TeacherCode : option<string>
+        UserName : string
+        Password : string
+        ConfirmPassword : string
+        Name : string
+        Group : string
+        TeacherCode : option<string>
     }
 
     member this.HasErrors() =
@@ -40,11 +30,9 @@ type [<CLIMutable>] RegisterModel =
             | None     -> Ok this
 
 type [<CLIMutable>] LoginModel = 
-    {
-    [<Required(ErrorMessage="Не указано имя пользователя")>]
-    UserName : string
-    [<Required(ErrorMessage="Не указан пароль")>]
-    Password : string
+    { 
+        UserName : string
+        Password : string 
     }
 
     member this.HasErrors() =
@@ -57,6 +45,7 @@ type [<CLIMutable>] LoginModel =
             match this.HasErrors() with
             | Some msg -> Error (RequestErrors.badRequest (text msg))
             | None     -> Ok this
+
 
 type [<CLIMutable>] User = { UserID:int;Name:string; Password:string; UserName: string; Role : string; Group : string}
 //and [<CLIMutable>] Product = { ProductId:int; CompanyId:int; Company: Company } 

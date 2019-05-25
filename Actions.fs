@@ -5,7 +5,6 @@ open Giraffe
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Logging
 open System
-open UI
 open System.IO
 open Microsoft.AspNetCore.Mvc.ModelBinding
 open Microsoft.AspNetCore.Authentication.Cookies
@@ -13,11 +12,8 @@ open System.Globalization
 
 let time() = System.DateTime.Now.ToString()
 
-let razor = RazorGenerator.GenerateView
-
 let currentDirectory = Directory.GetCurrentDirectory()
-let webRoot = Path.Combine(currentDirectory, @"UI\wwwroot")
-let viewsDirectory = Path.Combine(webRoot, @"Views")
+let webRoot = Path.Combine(currentDirectory, @"wwwroot")
 
 let authScheme = CookieAuthenticationDefaults.AuthenticationScheme
 
@@ -40,8 +36,14 @@ let errorHandler (ex : Exception) (logger : ILogger) =
 let modelState = ModelStateDictionary()
 
 let russian = CultureInfo.CreateSpecificCulture("ru-ru")
-let parsingError (err : string) = RequestErrors.BAD_REQUEST err
+let parsingError (err : string) = 
+    RequestErrors.BAD_REQUEST err
+
 
 let setRole = function 
     |Some "f4df6a5d99" -> "Admin"
     |_ -> "User"
+
+let isAuthorize = 
+    fun (ctx:HttpContext) ->
+        ctx.User.Identity.IsAuthenticated

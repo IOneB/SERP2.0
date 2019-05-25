@@ -13,10 +13,6 @@ open System.Security.Claims
 let userRoute routequery = route routequery >=> mustBeLoggedIn
 let adminRoute routequery = userRoute routequery >=> mustBeAdmin
 
-let razorView page model : HttpHandler =
-    razor (page, model)
-    |> htmlString
-
 let textAndLog txt log : HttpHandler =
     handleContext(
         fun ctx ->
@@ -28,6 +24,7 @@ let textAndLog txt log : HttpHandler =
 
 let loginHandler (model : LoginModel) =
     fun (next : HttpFunc) (ctx : HttpContext) ->
+        ctx.GetLogger("loginHandler").LogInformation(model.ToString())
         task{
             let user = getUserByName model.UserName
             let claimCookie value = 
@@ -47,7 +44,6 @@ let loginHandler (model : LoginModel) =
                     | _ -> parsingError "Неверный логин или пароль") next ctx
         }
     
-
 let registerHandler (model : RegisterModel ) =  
     fun (next : HttpFunc) (ctx : HttpContext) ->
         task{

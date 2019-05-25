@@ -1,6 +1,7 @@
 ﻿module Routers
 
 open Giraffe
+open Giraffe.Razor
 open Handlers
 open Actions
 open SERP.Entities
@@ -13,23 +14,24 @@ let adminRouter = subRoute "/admin" (choose [
     ])
 
 let userRouter = subRoute "/user" (choose [
-    userRoute "/home"              >=> warbler (fun (next, ctx) -> allUsers() |> razorView "list.cshtml" )
+    userRoute "/home"              >=> warbler (fun (next, ctx) -> (razorHtmlView "list" (Some (allUsers())) None None ))
     userRoute "/logout"            >=> logoutHandler
     userRoute "/time"              >=> warbler (fun _-> textAndLog (time()) "aaa")
     userRoute "/download_result"   >=> text "manage"
     ])
 
 let postRouter = choose[
-        route "/user/login"        >=> tryBindForm<LoginModel> parsingError (Some russian) (validateModel loginHandler) //TODO: в следующем слое проверить статус и сайнин
-        route "/user/register"     >=> tryBindForm<RegisterModel> parsingError (Some russian) (validateModel registerHandler) >=> redirectTo false "/user/login" 
+        route "/login"        >=> tryBindForm<LoginModel> parsingError None (validateModel loginHandler) //TODO: в следующем слое проверить статус и сайнин
+        route "/register"     >=> tryBindForm<RegisterModel> parsingError (Some russian) (validateModel registerHandler) >=> redirectTo false "/user/login" 
     ]
 
 let webApp : HttpHandler =
     choose [
         GET >=> choose [
+            route "/view"       >=> razorHtmlView "View" None None None
             route "/"           >=> redirectTo false "/user/home"
-            route "/login"      >=> warbler (fun _-> (None |> razorView "login.cshtml"))
-            adminRouter
+            route "/login"      >=> warbler (fun (next, ctx)-> (razorHtmlView "login" (None) None None))
+            adminRouter 
             userRouter
             route "/tutorial"   >=> text "tutorial"
             route "/recommend"  >=> text "recommend"

@@ -1,0 +1,156 @@
+﻿@using SERP.Entities
+@model RegisterModel
+
+@{
+    Layout = "_Layout";
+}
+<style>
+
+</style>
+
+<div class="row">
+    <section id="login-window" class="md-5 mx-auto" style="max-width:500px;">
+        <div class="card card-cascade narrower dark-card-admin text-white">
+            <section>
+                <div class="modal-c-tabs">
+
+                    <!-- Nav tabs -->
+                    <ul class="nav md-tabs tabs-2 light-blue darken-3" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#panel1" role="tab" aria-selected="false">
+                                <i class="fas fa-user mr-1"></i>
+                                Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#panel2" role="tab" aria-selected="true">
+                                <i class="fas fa-user-plus mr-1"></i>
+                                Register
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- Tab panels -->
+                    <div class="tab-content">
+
+                        <div class="tab-pane fade in" id="panel1" role="tabpanel">
+
+                            <!--Алерт-->
+                            <div id="login-container" style="display: none !important" class="alert alert-danger alert-message d-flex rounded p-0" role="alert">
+                                <div class="alert-icon d-flex justify-content-center align-items-center flex-grow-0 flex-shrink-0 py-3">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="d-flex align-items-center py-2 pr-1">
+                                    <span id="login-alert"></span>
+                                </div>
+                            </div>
+
+                            <div class=" mb-1">
+                                <div class="md-form form-sm">
+                                    <i class="fas fa-envelope prefix"></i>
+                                    <input type="text" id="login-username" class="form-control form-control-sm">
+                                    <label for="form22">Логин</label>
+                                </div>
+
+                                <div class="md-form form-sm">
+                                    <i class="fas fa-lock prefix"></i>
+                                    <input type="password" id="login-password" class="form-control form-control-sm">
+                                    <label for="form23">Пароль</label>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <button id="login-button" class="btn btn-info waves-effect waves-light">Log in <i class="fas fa-sign-in-alt ml-1"></i></button>
+                                </div>
+                            </div>
+                            <!-- Footer -->
+                            <div class="modal-footer">
+                                <div class="options text-center text-md-right mt-1">
+                                    <p>Впервые тут? <span class="text-primary">Зарегистрируйтесь!</span></p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!--Panel 8-->
+                        <div class="tab-pane fade active show" id="panel2" role="tabpanel">
+                            <!--<label>логин</label>
+                            <input type="text" name="UserName" />
+                            <label>пароль</label>
+                            <input type="password" name="Password" />
+                            <label>еще раз пароль</label>
+                            <input type="password" name="ConfirmPassword" />
+                            <input type="submit" />
+                            <input name="Group" />
+                            <input type="checkbox" name="IsTeacher" checked="checked" />
+                            <input name="TeacherCode" />
+                            <input name="Name" />-->
+                            <!-- Body -->
+                            <div class="modal-body">
+                                <div class="md-form form-sm">
+                                    <i class="fas fa-envelope prefix"></i>
+                                    <input type="text" id="UserName" class="form-control form-control-sm">
+                                    <label for="form24">Логин</label>
+                                </div>
+
+                                <div class="md-form form-sm">
+                                    <i class="fas fa-lock prefix"></i>
+                                    <input type="password" id="form25" class="form-control form-control-sm">
+                                    <label for="form25">Your password</label>
+                                </div>
+
+                                <div class="md-form form-sm">
+                                    <i class="fas fa-lock prefix"></i>
+                                    <input type="password" id="form26" class="form-control form-control-sm">
+                                    <label for="form26">Repeat password</label>
+                                </div>
+
+                                <div class="text-center form-sm mt-2">
+                                    <button class="btn btn-info waves-effect waves-light">Sign up <i class="fas fa-sign-in-alt ml-1"></i></button>
+                                </div>
+                            </div>
+                            <!-- Footer -->
+                            <div class="modal-footer">
+                                <div class="options text-right">
+                                    <p class="pt-1">Уже бывали? <span class="text-primary">Авторизируйтесь</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
+</div>
+
+@section customScripts{
+<script>
+    $('#slide-out').hide();
+    $('#float-left').hide();
+    $('main').css("padding-left", 0);
+    $('footer').css("padding-left", 0);
+
+    $('#login-button').click(function () {
+        $.post("/login", {
+            UserName: $('#login-username').val(),
+            Password: $('#login-password').val()
+        }, function (data) {
+            alert(data);
+        })
+            .fail(function (xhr, status, error) {
+                $('#login-container').removeAttr("style");
+                $('#login-alert').html(xhr.responseText.replace(/['"«»]/g, ''));
+            });
+    });
+</script>
+}
+<!-- <form action="/user/login" method="post">
+    <label>логин</label>
+    <input type="text" name="UserName" />
+    <label>пароль</label>
+    <input type="password" name="Password" />
+    <label>еще раз пароль</label>
+    <input type="password" name="ConfirmPassword" />
+    <input type="submit" />
+    <input name="Group"/>
+    <input type="checkbox" name="IsTeacher" checked="checked"/>
+    <input name="TeacherCode" />
+    <input name="Name" />
+</form> !-->

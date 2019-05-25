@@ -15,7 +15,7 @@ let cookieOptions = fun (options:CookieAuthenticationOptions) ->
     options.LoginPath <- new Microsoft.AspNetCore.Http.PathString "/login"
 
 let configureServices (services: IServiceCollection) =
-    services.AddRazorEngine (viewsDirectory) |> ignore
+    services.AddRazorEngine webRoot |> ignore
     services.AddMvc() |> ignore
     services.AddAuthentication(authScheme)
         .AddCookie(cookieOptions) |> ignore
