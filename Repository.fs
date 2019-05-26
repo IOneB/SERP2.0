@@ -19,6 +19,6 @@ let getUserByName userName =
 
 let createUser (model : RegisterModel) = 
     use db = new UserContext()
-    let newUser = {defaultUser with UserName = model.UserName; Password = model.Password; Name = model.Name; Group = model.Group; Role = setRole model.TeacherCode }
+    let newUser = {defaultUser with UserName = model.UserName; Password = GetHash model.Password; Name = model.Name; Group = getParam model.Group; Role = setRole model.TeacherCode }
     db.Users.Add(newUser) |> ignore
     db.SaveChanges true

@@ -5,7 +5,6 @@
     Layout = "_Layout";
 }
 <style>
-
 </style>
 
 <div class="row">
@@ -45,17 +44,17 @@
                                 </div>
                             </div>
 
-                            <div class=" mb-1">
+                            <div class="mb-1">
                                 <div class="md-form form-sm">
                                     <i class="fas fa-envelope prefix"></i>
                                     <input type="text" id="login-username" class="form-control form-control-sm">
-                                    <label for="form22">Логин</label>
+                                    <label for="login-username">Логин</label>
                                 </div>
 
                                 <div class="md-form form-sm">
                                     <i class="fas fa-lock prefix"></i>
                                     <input type="password" id="login-password" class="form-control form-control-sm">
-                                    <label for="form23">Пароль</label>
+                                    <label for="login-password">Пароль</label>
                                 </div>
                                 <div class="text-center mt-2">
                                     <button id="login-button" class="btn btn-info waves-effect waves-light">Log in <i class="fas fa-sign-in-alt ml-1"></i></button>
@@ -71,40 +70,64 @@
                         </div>
                         <!--Panel 8-->
                         <div class="tab-pane fade active show" id="panel2" role="tabpanel">
-                            <!--<label>логин</label>
-                            <input type="text" name="UserName" />
-                            <label>пароль</label>
-                            <input type="password" name="Password" />
-                            <label>еще раз пароль</label>
-                            <input type="password" name="ConfirmPassword" />
-                            <input type="submit" />
-                            <input name="Group" />
-                            <input type="checkbox" name="IsTeacher" checked="checked" />
-                            <input name="TeacherCode" />
-                            <input name="Name" />-->
                             <!-- Body -->
-                            <div class="modal-body">
-                                <div class="md-form form-sm">
-                                    <i class="fas fa-envelope prefix"></i>
-                                    <input type="text" id="UserName" class="form-control form-control-sm">
-                                    <label for="form24">Логин</label>
+                            <div id="register-container" style="display: none !important" class="alert alert-danger alert-message d-flex rounded p-0" role="alert">
+                                <div class="alert-icon d-flex justify-content-center align-items-center flex-grow-0 flex-shrink-0 py-3">
+                                    <i class="fas fa-exclamation-triangle"></i>
                                 </div>
+                                <div class="d-flex align-items-center py-2 pr-1">
+                                    <span id="register-alert"></span>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-left:2px;">
+                                <div class="mb-0 " style="margin:7px;">
+                                    <div class="md-form form-sm">
+                                        <i class="fas fa-envelope prefix"></i>
+                                        <input type="text" id="register-username" class="form-control form-control-sm">
+                                        <label for="register-username">Логин</label>
+                                    </div>
 
-                                <div class="md-form form-sm">
-                                    <i class="fas fa-lock prefix"></i>
-                                    <input type="password" id="form25" class="form-control form-control-sm">
-                                    <label for="form25">Your password</label>
-                                </div>
+                                    <div class="md-form form-sm">
+                                        <i class="fas fa-lock prefix"></i>
+                                        <input type="password" id="register-password" class="form-control form-control-sm">
+                                        <label for="register-password">Пароль</label>
+                                    </div>
 
-                                <div class="md-form form-sm">
-                                    <i class="fas fa-lock prefix"></i>
-                                    <input type="password" id="form26" class="form-control form-control-sm">
-                                    <label for="form26">Repeat password</label>
+                                    <div class="md-form form-sm">
+                                        <i class="fas fa-lock prefix"></i>
+                                        <input type="password" id="register-confirmpassword" class="form-control form-control-sm">
+                                        <label for="register-confirmpassword">Подтвердите пароль</label>
+                                    </div>
                                 </div>
+                                <div class="mb-0 " style="margin:7px;">
+                                    <div class="md-form form-sm">
+                                        <i class="fas fa-address-card prefix"></i>
+                                        <input type="text" id="register-name" class="form-control form-control-sm">
+                                        <label for="register-name">Имя</label>
+                                    </div>
 
-                                <div class="text-center form-sm mt-2">
-                                    <button class="btn btn-info waves-effect waves-light">Sign up <i class="fas fa-sign-in-alt ml-1"></i></button>
+                                    <div class="md-form form-sm">
+                                        <i class="fas fa-users prefix"></i>
+                                        <input type="text" id="register-group" class="form-control form-control-sm">
+                                        <label for="register-group">Группа</label>
+                                    </div>
                                 </div>
+                            </div>
+
+
+                            <div  class="md-form form-sm">
+                                <input class="form-check-input" type="checkbox" id="checkbox-teacher" />
+                                <label id="enable-teacher" class="form-check-label" for="checkbox-teacher">Я преподаватель!</label>
+                            </div>
+
+                            <div style="display:none;" id="teachercode" class="md-form form-sm">
+                                <i class="fas fa-key prefix"></i>
+                                <input type="password" id="register-teachercode" class="form-control form-control-sm">
+                                <label for="register-teachercode">Код преподавателя</label>
+                            </div>
+
+                            <div class="text-center form-sm mt-2">
+                                <button id="register-button" class="btn btn-info waves-effect waves-light">Sign up <i class="fas fa-sign-in-alt ml-1"></i></button>
                             </div>
                             <!-- Footer -->
                             <div class="modal-footer">
@@ -127,30 +150,37 @@
     $('main').css("padding-left", 0);
     $('footer').css("padding-left", 0);
 
+    $('#enable-teacher').click(function () {
+        $('#teachercode').fadeToggle();
+    });
+
     $('#login-button').click(function () {
         $.post("/login", {
             UserName: $('#login-username').val(),
             Password: $('#login-password').val()
-        }, function (data) {
-            alert(data);
+        }, function () {
+            document.location.href = "/user/home";
         })
             .fail(function (xhr, status, error) {
                 $('#login-container').removeAttr("style");
                 $('#login-alert').html(xhr.responseText.replace(/['"«»]/g, ''));
             });
     });
+    $('#register-button').click(function () {
+        $.post("/register", {
+            UserName: $('#register-username').val(),
+            Password: $('#register-password').val(),
+            ConfirmPassword: $('#register-confirmpassword').val(),
+            Group: $('#register-group').val(),
+            Name: $('#register-name').val(),
+            TeacherCode: $('#register-teachercode').val(),
+        }, function () {
+            document.location.href = "/user/home";
+        })
+            .fail(function (xhr, status, error) {
+                $('#register-container').removeAttr("style");
+                $('#register-alert').html(xhr.responseText.replace(/['"«»]/g, ''));
+            });
+    });
 </script>
 }
-<!-- <form action="/user/login" method="post">
-    <label>логин</label>
-    <input type="text" name="UserName" />
-    <label>пароль</label>
-    <input type="password" name="Password" />
-    <label>еще раз пароль</label>
-    <input type="password" name="ConfirmPassword" />
-    <input type="submit" />
-    <input name="Group"/>
-    <input type="checkbox" name="IsTeacher" checked="checked"/>
-    <input name="TeacherCode" />
-    <input name="Name" />
-</form> !-->

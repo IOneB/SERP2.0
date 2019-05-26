@@ -9,6 +9,7 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/mdb2.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
+
 </head>
 <body class="fixed-sn navy-blue-skin dark-bg-admin">
     <header>
@@ -28,22 +29,27 @@
 
                         <li>
                             <a class="collapsible-header waves-effect arrow-r">
-                                <i class="w-fa fas fa-tachometer-alt"></i>Dashboards<i class="fas fa-angle-down rotate-icon"></i>
+                                <i class="w-fa fas fa-book"></i>Рекомендации<i class="fas fa-angle-down rotate-icon"></i>
                             </a>
                             <div class="collapsible-body">
                                 <ul>
                                     <li>
-                                        <a href="../dashboards/v-1.html" class="waves-effect">Version 1</a>
+                                        <a href="/recommend/theory" class="waves-effect">Теория</a>
                                     </li>
                                 </ul>
                             </div>
                         </li>
                         <li>
-                            <a href="../alerts/alerts.html" class="collapsible-header waves-effect"><i class="w-fa far fa-bell"></i>Alerts</a>
+                            <a href="/user/main" class="collapsible-header waves-effect"><i class="fas fa-tachometer-alt"></i>Оценка эффективности</a>
                         </li>
+                        @if (User.IsInRole("Admin")){
+                        <li>
+                            <a href="/admin/manage" class="collapsible-header waves-effect"><i class="fas fa-toolbox"></i>Администрирование</a>
+                        </li>
+                        }
                     </ul>
-                </li>
 
+                </li>
             </ul>
             <div class="sidenav-bg mask-strong"></div>
         </div>
@@ -66,10 +72,8 @@
                 <ul class="nav navbar-nav nav-flex-icons ml-auto">
                     @if (User.Identity.IsAuthenticated)
                     {
-
-                    <!-- Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle waves-effect text-white" href="#" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle noclose waves-effect text-white" href="#" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             <i class="fas fa-user text-white"></i> <span class="clearfix d-none d-sm-inline-block">Профиль</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
@@ -105,7 +109,7 @@
     <script type="text/javascript" src="/js/popper.min.js"></script>
     <script type="text/javascript" src="/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/js/mdb.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
+
     <script>
 
         // SideNav Initialization
@@ -127,9 +131,11 @@
         });
 
         // Tooltips Initialization
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
+        $(document).ready(
+            function () {
+            $('[data-toggle="tooltip"]').tooltip();
+            }
+        );
 
     </script>
     <!-- Charts -->

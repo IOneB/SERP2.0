@@ -9,19 +9,20 @@ type [<CLIMutable>] RegisterModel =
         Password : string
         ConfirmPassword : string
         Name : string
-        Group : string
+        Group : option<string>
         TeacherCode : option<string>
     }
 
     member this.HasErrors() =
-        if      this.UserName.Length < 5                then Some "UserName is too short."
-        else if this.Password.Length  < 3               then Some "Password is too short."
-        else if this.Password.Length  > 20              then Some "Password is too long."
-        else if this.Password <> this.ConfirmPassword   then Some "Passwords do not match."
-        else if this.Name.Length < 4                    then Some "Name is too short."
-        else if this.Group.Length > 7                   then Some "Group is too short."
-        else if this.Group.Length < 3                   then Some "Group is too long."
-        else None
+        if      this.UserName.Length < 5                then Some "Имя пользователя должно быть не менее 5 символов."
+        else if this.Password.Length  < 3               then Some "Слишком короткий пароль."
+        else if this.Password.Length  > 20              then Some "Слишком длинный пароль."
+        else if this.Password <> this.ConfirmPassword   then Some "Пароли не совпадают."
+        else if this.Name.Length < 3                    then Some "Слишком короткое имя."
+        else 
+            match this.Group with
+                | Some value when value.Length > 7 ->        Some "Введите корректный номер группы." 
+                | _ ->                                       None
 
     interface IModelValidation<RegisterModel> with
         member this.Validate() =

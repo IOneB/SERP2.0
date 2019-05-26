@@ -8,37 +8,38 @@ open SERP.Entities
 open Repository
 
 let adminRouter = subRoute "/admin" (choose [
-    adminRoute "/manage"           >=> setStatusCode 200  >=> text "aaa"
-    adminRoute "/time"             >=> warbler (fun _-> textAndLog (time()) "aaa")
-    adminRoute "/download_result"  >=> text "manage"
+    adminRoute "/manage"           >=> razorHtmlView "list" (Some (allUsers())) (Some viewData) None 
+    routef "/result/%i"  getResultHandler
     ])
 
 let userRouter = subRoute "/user" (choose [
-    userRoute "/home"              >=> warbler (fun (next, ctx) -> (razorHtmlView "list" (Some (allUsers())) None None ))
-    userRoute "/logout"            >=> logoutHandler
-    userRoute "/time"              >=> warbler (fun _-> textAndLog (time()) "aaa")
-    userRoute "/download_result"   >=> text "manage"
+    userRoute "/home"              >=> profileHandler
+    userRoute "/profile"           >=> redirectTo false "/user/home" 
+    userRoute "/main"              >=> razorHtmlView "main" None None None
+    userRoute "/result"            >=> getUserResultHandler
     ])
-
-let postRouter = choose[
-        route "/login"        >=> tryBindForm<LoginModel> parsingError None (validateModel loginHandler) //TODO: в следующем слое проверить статус и сайнин
-        route "/register"     >=> tryBindForm<RegisterModel> parsingError (Some russian) (validateModel registerHandler) >=> redirectTo false "/user/login" 
-    ]
 
 let webApp : HttpHandler =
     choose [
         GET >=> choose [
-            route "/view"       >=> razorHtmlView "View" None None None
-            route "/"           >=> redirectTo false "/user/home"
-            route "/login"      >=> warbler (fun (next, ctx)-> (razorHtmlView "login" (None) None None))
+            route "/"           >=> redirectTo false "/test"
+            route "/test"       >=> razorHtmlView "test" None None None
+            route "/login"      >=> warbler (fun (next, ctx)-> (razorHtmlView "login" (None) (Some viewData) None))
+            route "/logout"     >=> logoutHandler >=> redirectTo false "/login"
+
             adminRouter 
             userRouter
-            route "/tutorial"   >=> text "tutorial"
-            route "/recommend"  >=> text "recommend"
+
+            subRoute "/recommend" (choose [
+                userRoute "/theory"     >=> razorHtmlView "theory" None None None
+                userRoute "/literature" >=> razorHtmlView "literature" None None None
+                ])
         ]
 
         POST >=> choose [
-            postRouter
+            route "/login"        >=> tryBindForm<LoginModel> parsingError None (validateModel loginHandler)
+            route "/register"     >=> tryBindForm<RegisterModel> parsingError (Some russian) (validateModel registerHandler)
+            route "/result"       >=> tryBindForm<RegisterModel>   parsingError None (registerHandler) //TODO:
         ]
 
         routex ".*" >=> setStatusCode 404 >=> text "Not Found"

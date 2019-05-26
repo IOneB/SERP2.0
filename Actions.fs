@@ -1,6 +1,8 @@
 ﻿module Actions
 
 open FSharp.Control.Tasks.V2.ContextInsensitive
+open System.Security.Cryptography
+open System.Text
 open Giraffe
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Logging
@@ -9,6 +11,13 @@ open System.IO
 open Microsoft.AspNetCore.Mvc.ModelBinding
 open Microsoft.AspNetCore.Authentication.Cookies
 open System.Globalization
+
+let viewData =
+    dict [
+        "Who", "Foo Bar" :> obj
+        "Foo", 89 :> obj
+        "Bar", true :> obj
+    ]
 
 let time() = System.DateTime.Now.ToString()
 
@@ -44,6 +53,14 @@ let setRole = function
     |Some "f4df6a5d99" -> "Admin"
     |_ -> "User"
 
-let isAuthorize = 
-    fun (ctx:HttpContext) ->
-        ctx.User.Identity.IsAuthenticated
+let GetHash (secret: string) =
+    use md5 = System.Security.Cryptography.MD5.Create()
+    secret
+    |> System.Text.Encoding.ASCII.GetBytes
+    |> md5.ComputeHash
+    |> Seq.map (fun c -> c.ToString("X2"))
+    |> Seq.reduce (+)
+
+let getParam = function
+     | Some value -> value
+     | None -> ""

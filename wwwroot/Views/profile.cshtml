@@ -1,0 +1,17 @@
+﻿@using SERP.Entities
+@model User
+
+@{
+    Layout = "_Layout";
+}
+
+
+
+<h1>@User.Identity.Name</h1>
+<h2>@Model.Role</h2>
+<h3>
+    @Model.Group
+</h3>
+<h4>
+    @Model.Name
+</h4>
