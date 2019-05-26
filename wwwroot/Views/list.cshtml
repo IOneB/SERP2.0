@@ -44,6 +44,9 @@
                                 <th class="th-sm">
                                     Результат
                                 </th>
+                                <th>
+                                    Админ
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -56,6 +59,7 @@
                                 <td>@DateTime.Now.ToShortDateString()</td>
                                 <td>@DateTime.Now.ToLongTimeString()</td>
                                 <td><a href="/admin/result/@result.UserID" class="text-primary">Скачать</a></td>
+                                <td>Нет</td>
                             </tr>
                             }
                         </tbody>

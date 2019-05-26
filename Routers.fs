@@ -8,7 +8,7 @@ open SERP.Entities
 open Repository
 
 let adminRouter = subRoute "/admin" (choose [
-    adminRoute "/manage"           >=> razorHtmlView "list" (Some (allUsers())) (Some viewData) None 
+    adminRoute "/manage"           >=> warbler (fun _ -> razorHtmlView "list" (Some (allUsers())) (Some viewData) None)
     routef "/result/%i"  getResultHandler
     ])
 
