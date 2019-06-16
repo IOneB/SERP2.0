@@ -8,6 +8,7 @@ namespace DbContext
         static int Main() => 0;
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Result> Results { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -40,7 +40,22 @@
                             </div>
                         </li>
                         <li>
-                            <a href="/user/main" class="collapsible-header waves-effect"><i class="fas fa-tachometer-alt"></i>Оценка эффективности</a>
+                            <a class="collapsible-header waves-effect arrow-r">
+                                <i class="w-fa fas fa-tachometer-alt"></i>Расчеты<i class="fas fa-angle-down rotate-icon"></i>
+                            </a>
+                            <div class="collapsible-body">
+                                <ul>
+                                    <li>
+                                        <a href="/user/security" class="waves-effect">Оценка защищенности</a>
+                                    </li>
+                                    <li>
+                                        <a href="/user/protection" class="waves-effect">Защищенность от наводок</a>
+                                    </li>
+                                    <li>
+                                        <a href="/user/effective" class="waves-effect">Оценка эффективности</a>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                         @if (User.IsInRole("Admin")){
                         <li>

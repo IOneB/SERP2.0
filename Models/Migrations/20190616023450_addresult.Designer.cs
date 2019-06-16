@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DbContext.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20190521142542_usermodel")]
-    partial class usermodel
+    [Migration("20190616023450_addresult")]
+    partial class addresult
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,6 +19,31 @@ namespace DbContext.Migrations
                 .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("SERP.Entities.Result", b =>
+                {
+                    b.Property<int>("ResultID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Count");
+
+                    b.Property<string>("Freqs");
+
+                    b.Property<string>("NoiseTens");
+
+                    b.Property<int>("ResultType");
+
+                    b.Property<string>("Tens");
+
+                    b.Property<int>("UserID");
+
+                    b.HasKey("ResultID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Results");
+                });
 
             modelBuilder.Entity("SERP.Entities.User", b =>
                 {
@@ -39,6 +64,14 @@ namespace DbContext.Migrations
                     b.HasKey("UserID");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("SERP.Entities.Result", b =>
+                {
+                    b.HasOne("SERP.Entities.User", "User")
+                        .WithMany("Results")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

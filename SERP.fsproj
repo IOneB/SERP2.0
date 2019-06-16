@@ -9,6 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="UI\**" />
+    <EmbeddedResource Remove="UI\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="wwwroot\css\addons\datatables-select.css" />
     <Content Remove="wwwroot\css\addons\datatables-select.min.css" />
     <Content Remove="wwwroot\css\addons\datatables.css" />

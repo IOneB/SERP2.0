@@ -3,14 +3,16 @@ using DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DbContext.Migrations
 {
     [DbContext(typeof(UserContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20190616033020_updateresult")]
+    partial class updateresult
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,8 +30,6 @@ namespace DbContext.Migrations
 
                     b.Property<string>("Freqs");
 
-                    b.Property<string>("L");
-
                     b.Property<string>("NoiseTens");
 
                     b.Property<int>("ResultType");
@@ -38,13 +38,11 @@ namespace DbContext.Migrations
 
                     b.Property<string>("Tens");
 
-                    b.Property<string>("U1");
-
-                    b.Property<string>("U2");
-
                     b.Property<int>("UserID");
 
                     b.HasKey("ResultID");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("Results");
                 });
@@ -68,6 +66,14 @@ namespace DbContext.Migrations
                     b.HasKey("UserID");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("SERP.Entities.Result", b =>
+                {
+                    b.HasOne("SERP.Entities.User", "User")
+                        .WithMany("Results")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

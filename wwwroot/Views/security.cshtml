@@ -1,0 +1,325 @@
+﻿@model object
+
+@{
+    Layout = "_Layout";
+}
+
+<section class="">
+    <div class="card-body card card-cascade narrower z-depth-0 dark-card-admin text-white">
+
+        <div class="view view-cascade gradient-card-header light-blue lighten-1" style="margin-bottom:20px; margin-top: -2em;">
+            <h1 class="h4-responsive mb-0 font-weight-bold" style="font-size:140% !important;">Форма расчета оценки защищенности</h1>
+        </div>
+        <h5 style="display:inline-block">Количество измеренных значений</h5>
+        <div class="col" style="margin-bottom:15px;">
+            <form class="range-field row">
+                <div class="col col-md-3">1</div>
+                <div class="col col-md-3" >2</div>
+                <div class="col col-md-3">3</div>
+                <div class="col col-md-2">4</div>
+                <div class="col-2 col-md" style="text-align:right;">5</div>
+                <input id="count" type="range" value="3" min="1" max="5" onchange="selectCount(this.value)">
+            </form>
+        </div>
+
+        <!--Частоты-->
+        <div class="pb-5">
+            <h5 style="display:inline-block">Частоты (МГц)</h5>
+            <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
+        </div>
+
+        <div class="row">
+            @for (int i = 1; i <= 5; i++){
+            <div class="col-md-3 mb-3 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => "lvl" + item))" @(i > 3? "style=display:none;": "")>
+                <div class="md-form">
+                    <input type="text" id=@("freq"+i) class="form-control">
+                    <label for=@("freq"+i) class="">@i частота</label>
+                </div>
+            </div>
+            }
+        </div>
+
+        <div class="pb-5">
+            <h5 style="display:inline-block">Напряженности поля (дБ)</h5>
+            <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
+        </div>
+
+        <!--Напряженности-->
+        <div class="row">
+            @for (int i = 1; i <= 5; i++){
+            <div class="col-md-3 mb-3 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))" @(i > 3? "style=display:none;": "")>
+                <div class="md-form">
+                    <input type="text" id=@("tens"+i) class="form-control">
+                    <label for=@("tens"+i) class="">@i напряженность</label>
+                </div>
+            </div>
+            }
+        </div>
+
+        <!--Напряженности поля шума-->
+        <div class="pb-5">
+            <h5 style="display:inline-block">Напряженности поля шума (дБ)</h5>
+            <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
+        </div>
+        <div class="row">
+            @for (int i = 1; i <= 5; i++){
+            <div class="col-md-3 mb-3 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))" @(i > 3? "style=display:none;": "")>
+                <div class="md-form">
+                    <input type="text" id=@("noise-tens"+i) class="form-control">
+                    <label for=@("noise-tens"+i) class="">@i значение</label>
+                </div>
+            </div>
+            }
+        </div>
+        <section class="mb-5 pb-4">
+            <button id="go-button" type="button" onclick="go()" class="btn btn-indigo waves-effect float-left waves-light">Рассчитать!</button>
+        </section>
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <h5 class="pb-5">Checkboxes and Radio</h5>
+
+        <!-- Grid row -->
+        <div class="row">
+
+            <!-- Grid column -->
+            <div class="col-lg-4 col-md-12 mb-4">
+
+                <fieldset class="form-check">
+                    <input class="form-check-input" type="checkbox" id="checkbox1" checked="checked">
+                    <label class="form-check-label" for="checkbox1">Classic checkbox</label>
+                </fieldset>
+
+                <fieldset class="form-check mt-4">
+                    <input class="form-check-input filled-in" type="checkbox" id="checkbox2" checked="checked">
+                    <label class="form-check-label" for="checkbox2">Filled-in checkbox</label>
+                </fieldset>
+
+            </div>
+            <!-- Grid column -->
+            <!-- Grid column -->
+            <div class="col-lg-4 col-md-6 mb-4">
+
+                <fieldset class="form-check mb-4">
+                    <input class="form-check-input" name="group1" type="radio" id="radio1" checked="checked">
+                    <label class="form-check-label" for="radio1">Option 1</label>
+                </fieldset>
+
+                <fieldset class="form-check mb-4">
+                    <input class="form-check-input" name="group1" type="radio" id="radio2">
+                    <label class="form-check-label" for="radio2">Option 2</label>
+                </fieldset>
+
+                <fieldset class="form-check mb-4">
+                    <input class="form-check-input" name="group1" type="radio" id="radio3">
+                    <label class="form-check-label" for="radio3">Option 3</label>
+                </fieldset>
+
+            </div>
+            <!-- Grid column -->
+            <!-- Grid column -->
+            <div class="col-lg-4 col-md-6 mb-4">
+
+                <!-- Switch -->
+                <div class="switch">
+                    <label>
+                        Off
+                        <input type="checkbox" checked="checked">
+                        <span class="lever"></span> On
+                    </label>
+                </div>
+                <!-- Disabled Switch -->
+                <div class="switch">
+                    <label>
+                        Off
+                        <input disabled="" type="checkbox">
+                        <span class="lever"></span> On
+                    </label>
+                </div>
+
+            </div>
+            <!-- Grid column -->
+
+        </div>
+        <!-- Grid row -->
+        <h5 class="pb-5">File input</h5>
+
+        <!-- Grid row -->
+        <div class="row">
+
+            <!-- Grid column -->
+            <div class="col-md-6 mb-4">
+
+                <form>
+                    <div class="md-form">
+                        <div class="file-field">
+                            <div class="btn btn-primary btn-sm float-left waves-effect waves-light">
+                                <span>Choose file</span>
+                                <input type="file">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text" placeholder="Upload your file">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <!-- Grid column -->
+            <!-- Grid column -->
+            <div class="col-md-6 mb-4">
+
+                <form action="#">
+                    <div class="md-form">
+                        <div class="file-field">
+                            <div class="btn btn-primary btn-sm float-left waves-effect waves-light">
+                                <span>Choose files</span>
+                                <input type="file" multiple="">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text" placeholder="Upload one or more files">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <!-- Grid column -->
+
+        </div>
+        <!-- Grid row -->
+
+        <h5 class="pb-5">Range</h5>
+
+        <!-- Grid row -->
+        <div class="row">
+
+            <!-- Grid column -->
+            <div class="col-md-12 mb-4">
+
+                <form class="range-field">
+                    <input type="range" min="0" max="100">
+                </form>
+            </div>
+            <!-- Grid column -->
+
+        </div>
+        <!-- Grid row -->
+
+        <h5 class="">Character counters</h5>
+
+        <!-- Grid row -->
+        <div class="row mb-5">
+
+            <!-- Grid column -->
+            <div class="col-md-6">
+                <div style="height:83px;"></div>
+                <div class="md-form">
+                    <input id="input-char-counter" type="text" length="10" class="form-control">
+                    <label for="input-char-counter">Input text</label>
+                    <span class="character-counter" style="float: right; font-size: 12px; height: 1px;"></span>
+                </div>
+
+            </div>
+            <!-- Grid column -->
+            <!-- Grid column -->
+            <div class="col-md-6">
+
+                <div class="md-form">
+                    <textarea id="textarea-char-counter" class="md-textarea form-control" rows="3" length="120"></textarea>
+                    <label for="textarea-char-counter">Type your text</label>
+                    <span class="character-counter" style="float: right; font-size: 12px; height: 1px;"></span>
+                </div>
+
+            </div>
+            <!-- Grid column -->
+
+        </div>
+        <!-- Grid row -->
+
+        <h5 class="pb-5">Select</h5>
+
+        <!-- Grid row -->
+        <!-- Grid row -->
+        <div class="row">
+            <!-- Grid column -->
+            <div class="col-lg-4 col-md-6 mb-4">
+
+                <select id="b" class="mdb-select md-form colorful-select dropdown-primary ">
+                    <option value="1">Option 1</option>
+                    <option value="2">Option 2</option>
+                    <option value="3">Option 3</option>
+                    <option value="4">Option 4</option>
+                    <option value="5">Option 5</option>
+                </select>
+                <label for="b" class="">Blue select</label>
+
+
+            </div>
+            <!-- Grid column -->
+
+        </div>
+        <!-- Grid row -->
+
+    </div>
+
+</section>
+
+<section id="result-section" class="" hidden>
+
+    <div class="card-body card card-cascade narrower z-depth-0 dark-card-admin text-white">
+        <div class="view view-cascade gradient-card-header light-blue lighten-1" style="margin-bottom:20px; margin-top: -2em;">
+            <h1 class="h4-responsive mb-0 font-weight-bold" style="font-size:140% !important;">Результаты</h1>
+        </div>
+    </div>
+</section>
+
+
+
+@section customScripts{
+    <script>
+    function selectCount(value) {
+        $(".lvl5").fadeOut();
+        $(".lvl" + value).fadeIn();
+            }
+    function go() {
+        var count = $("#count").val();
+        var freqs = [];
+        var tens = [];
+        var noiseTens = [];
+        var addEl = function (source, arr) {
+            var val = parseFloat($(source).val());
+            if (isNaN(val) || val < 0)
+                val = 0;
+            arr.push(val);
+        };
+        for (var i = 0; i < count; i++)
+        {
+            addEl("#freq" + (i + 1), freqs);
+            addEl("#tens" + (i + 1), tens);
+            addEl("#noise-tens" + (i + 1), noiseTens);
+        }
+        $.post("/security", {
+            Freqs: freqs,
+            Tens: tens,
+            NoiseTens: noiseTens,
+            Count: count,
+            ResultType: 0
+        }, function (res) {
+            alert(res);
+        })
+            .fail(function (xhr, status, error) {
+                alert(xhr.responseText.replace(/['"«»]/g, ''));
+            });
+    }
+    </script>
+}

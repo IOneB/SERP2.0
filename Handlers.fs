@@ -11,6 +11,8 @@ open Microsoft.AspNetCore.Authentication
 open System.Security.Claims
 open Giraffe.Razor
 open SERP.Entities
+open SERP.Entities.Default
+open SERP.Entities.Measure
 
 let userRoute routequery = route routequery >=> mustBeLoggedIn
 let adminRoute routequery = userRoute routequery >=> mustBeAdmin
@@ -94,3 +96,85 @@ let getResultHandler _ =
 let getUserResultHandler next ctx =
     text "Ok" next ctx
 
+let securityHandler (model : APIModel) : HttpHandler = 
+    fun next ctx ->
+        task {
+            let result = calcSecurity model.Freqs model.Tens model.NoiseTens
+            let response =
+                {
+                    model with
+                        SecureResult = first5 result
+                        L1 = second5 result
+                        L2 = third5 result
+                        Zone = fourth5 result
+                        Ec = fivth result
+                }
+            let security = 
+                {
+                    defaultResult with
+                        Freqs = listToStr model.Freqs
+                        Tens = listToStr model.Tens
+                        NoiseTens = listToStr model.NoiseTens
+                        Count = model.Count
+                        ResultValues = listToStr response.SecureResult.Value
+                        UserID = (getUserByName ctx.User.Identity.Name).Value.UserID
+                }    
+            return! 
+                (match saveResult security with
+                    | -1 -> parsingError "Не удалось сохранить результат, попробуйте позже"
+                    | _ -> json response) next ctx
+        }
+
+let protectionHandler (model:APIModel) : HttpHandler =
+    fun next ctx ->
+(*        task {
+            let result = calcSecurity model.Freqs model.Tens model.NoiseTens
+            let response =
+                {
+                    model with
+                        SecureResult = first4 result
+                        L1 = second4 result
+                        L2 = third4 result
+                }
+            let protection = 
+                {
+                    defaultResult with
+                        Freqs = listToStr model.Freqs
+                        Tens = listToStr model.Tens
+                        NoiseTens = listToStr model.NoiseTens
+                        Count = model.Count
+                        ResultValues = listToStr response.SecureResult
+                }    
+            return! 
+                (match saveResult protection with
+                    | -1 -> parsingError "Не удалось сохранить результат, попробуйте позже"
+                    | _ -> json response) next ctx
+        } *)
+        text "ура" next ctx
+
+let effectiveHandler (model:APIModel) : HttpHandler =
+    fun next ctx ->
+    (*    task {
+            let result = calcSecurity model.Freqs model.Tens model.NoiseTens
+            let response =
+                {
+                    model with
+                        SecureResult = first4 result
+                        L1 = second4 result
+                        L2 = third4 result
+                }
+            let effective = 
+                {
+                    defaultResult with
+                        Freqs = listToStr model.Freqs
+                        Tens = listToStr model.Tens
+                        NoiseTens = listToStr model.NoiseTens
+                        Count = model.Count
+                        ResultValues = listToStr response.SecureResult
+                }    
+            return! 
+                (match saveResult effective with
+                    | -1 -> parsingError "Не удалось сохранить результат, попробуйте позже"
+                    | _ -> json response) next ctx
+        } *)
+        text "ура" next ctx

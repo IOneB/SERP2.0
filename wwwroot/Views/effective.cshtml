@@ -1,0 +1,128 @@
+﻿@model object
+
+@{
+    Layout = "_Layout";
+}
+
+<section class="">
+    <div class="card-body card card-cascade narrower z-depth-0 dark-card-admin text-white">
+
+        <div class="view view-cascade gradient-card-header light-blue lighten-1" style="margin-bottom:20px; margin-top: -2em;">
+            <h1 class="h4-responsive mb-0 font-weight-bold" style="font-size:140% !important;">Форма расчета оценки защищенности</h1>
+        </div>
+        <h5 style="display:inline-block">Количество измеренных значений</h5>
+        <div class="col" style="margin-bottom:15px;">
+            <form class="range-field row">
+                <div class="col col-md-3">1</div>
+                <div class="col col-md-3" >2</div>
+                <div class="col col-md-3">3</div>
+                <div class="col col-md-2">4</div>
+                <div class="col-2 col-md">5</div>
+                <input id="count" type="range" value="5" min="1" max="5" onchange="selectCount(this.value)">
+            </form>
+        </div>
+
+        <!--Частоты-->
+        <div class="pb-5">
+            <h5 style="display:inline-block">Частоты (МГц)</h5>
+            <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
+        </div>
+
+        <div class="row">
+            @for (int i = 1; i <= 5; i++){
+            <div class="col-md-3 mb-3 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => "lvl" + item))">
+                <div class="md-form">
+                    <input type="text" id=@("freq"+i) class="form-control">
+                    <label for=@("freq"+i) class="">@i частота</label>
+                </div>
+            </div>
+            }
+        </div>
+
+        <div class="pb-5">
+            <h5 style="display:inline-block">Напряженности поля (дБ)</h5>
+            <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
+        </div>
+
+        <!--Напряженности-->
+        <div class="row">
+            @for (int i = 1; i <= 5; i++){
+            <div class="col-md-3 mb-3 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))">
+                <div class="md-form">
+                    <input type="text" id=@("tens"+i) class="form-control">
+                    <label for=@("tens"+i) class="">@i напряженность</label>
+                </div>
+            </div>
+            }
+        </div>
+
+        <!--Напряженности поля шума-->
+        <div class="pb-5">
+            <h5 style="display:inline-block">Напряженности поля шума (дБ)</h5>
+            <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
+        </div>
+        <div class="row">
+            @for (int i = 1; i <= 5; i++){
+            <div class="col-md-3 mb-3 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))">
+                <div class="md-form">
+                    <input type="text" id=@("noise-tens"+i) class="form-control">
+                    <label for=@("noise-tens"+i) class="">@i значение</label>
+                </div>
+            </div>
+            }
+        </div>
+        <section class="mb-5 pb-4">
+            <button id="go-button" type="button" onclick="go()" class="btn btn-indigo waves-effect float-left waves-light">Рассчитать!</button>
+        </section>
+    </div>
+
+</section>
+
+<section id="result-section" class="" hidden>
+
+    <div class="card-body card card-cascade narrower z-depth-0 dark-card-admin text-white">
+        <div class="view view-cascade gradient-card-header light-blue lighten-1" style="margin-bottom:20px; margin-top: -2em;">
+            <h1 class="h4-responsive mb-0 font-weight-bold" style="font-size:140% !important;">Результаты</h1>
+        </div>
+    </div>
+</section>
+
+
+
+@section customScripts{
+    <script>
+    function selectCount(value) {
+        $(".lvl5").fadeOut();
+        $(".lvl" + value).fadeIn();
+            }
+    function go() {
+        var count = $("#count").val();
+        var freqs = [];
+        var tens = [];
+        var noiseTens = [];
+        var addEl = function (source, arr) {
+            var val = parseFloat($(source).val());
+            if (isNaN(val) || val < 0)
+                val = 0;
+            arr.push(val);
+        };
+        for (var i = 0; i < count; i++)
+        {
+            addEl("#freq" + (i + 1), freqs);
+            addEl("#tens" + (i + 1), tens);
+            addEl("#noise-tens" + (i + 1), noiseTens);
+        }
+        $.post("/effective", {
+            freqs: freqs,
+            tens: tens,
+            noiseTens: noiseTens,
+            count: count,
+        }, function () {
+            alert("Ура");
+        })
+            .fail(function (xhr, status, error) {
+                alert(xhr.responseText.replace(/['"«»]/g, ''));
+            });
+    }
+    </script>
+}

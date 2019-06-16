@@ -5,6 +5,11 @@ open SERP.Entities
 open SERP.Entities.Default
 open Actions
 
+type User with
+    member this.Results = 
+        use db = new UserContext()
+        Seq.filter (fun r -> r.UserID = this.UserID) db.Results
+
 let allUsers _ = 
     use db = new UserContext()
     db.Users |> Seq.toList
@@ -19,6 +24,11 @@ let getUserByName userName =
 
 let createUser (model : RegisterModel) = 
     use db = new UserContext()
-    let newUser = {defaultUser with UserName = model.UserName; Password = GetHash model.Password; Name = model.Name; Group = getParam model.Group; Role = setRole model.TeacherCode }
+    let newUser = {defaultUser with UserName = model.UserName; Password = GetHash model.Password; Name = model.Name; Group = defaultArg model.Group ""; Role = setRole model.TeacherCode }
     db.Users.Add(newUser) |> ignore
+    db.SaveChanges true
+
+let saveResult security =
+    use db = new UserContext()
+    db.Results.Add(security) |> ignore
     db.SaveChanges true
