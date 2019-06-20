@@ -77,10 +77,9 @@ let GetHash (secret: string) =
     |> Seq.map (fun c -> c.ToString("X2"))
     |> Seq.reduce (+)
 
-let calcTens tens noiseTens : float<mkV/M> = 
-    let t = convertDBtoMkV tens
-    let n = convertDBtoMkV noiseTens 
-    (float (t * t + n * n) ** 0.5) * 1.0<mkV/M>
+let calcTens (tens: float<dB>) (noiseTens: float<dB>) : float<mkV/M> = 
+    (float (tens * tens - noiseTens * noiseTens) ** 0.5) * 1.0<dB>
+    |> convertDBtoMkV
 
 let calcRadius (tensNoise: float<mkV/M>) (tens: float<mkV/M>) l1 l2 = function
     | Zone.Near -> 1.0<M> / ((0.3 * tensNoise / tens) ** (1.0/3.0))
@@ -120,18 +119,31 @@ let calcSecurity freqs tens noiseTens =
 
 let calcProtection freqs tens noiseTens (U1 : float<dB> list) (U2 : float<dB> list) (l : float<M> list) = 
     let input = List.zip3 freqs tens noiseTens 
-    let normalize = List.map (fun (f, t, n) -> f, 20.0<dB> * log10 ((10.0 ** (t / 10.0<dB>) - 10.0 ** (n / 10.0<dB>)) ** (1.0/2.0)), n) input
-    let withDef = List.mapi (fun i (f, t, n) -> U1.[i], U2.[i], t - n, t, l.[i]) normalize
-    let withKp = List.map (fun (u1, u2, def, t, l) -> 20.0<dB> * (log10 (u1 / u2)) / l, def, t) withDef
-    let result = List.map (fun (k, d, t) -> ((d + 10.0<dB>)/ k), k, d, t) withKp
+    let normalize = List.map (fun (f, t, n) -> 
+                        f, 20.0<dB> * log10 ((10.0 ** (t / 10.0<dB>) - 10.0 ** (n / 10.0<dB>)) ** (1.0/2.0)), n) input
+    let withDef = List.mapi (fun i (f, t, n) -> 
+                        U1.[i], U2.[i], t - n, t, l.[i]) normalize
+    let withKp = List.map (fun (u1, u2, def, t, l) -> 
+                        20.0<dB> * (log10 (u1 / u2)) / l, def, t) withDef
+    let result = List.map (fun (k, d, t) -> 
+                        ((d + 10.0<dB>)/ k), k, d, t) withKp
     result //радиус, затухание, показатель защищенности и расчитанное значение напряжения 
 
-let calcEffective freqs tens noiseTens = 
-    
+let calcEffective freqs tens noiseTens noiseGen = 
+    let tau = 5.0<s>
+    let maxFreq = List.max freqs
+    let intervals = 
+        Seq.initInfinite (fun index -> 0.001 * float index / tau)
+        |> Seq.pairwise
+        |> Seq.takeWhile (fun (s,e) -> s < maxFreq)
+        |> Seq.map (fun (s, e) -> List.filter (fun freq -> freq >= s && freq < e) freqs)
+        |> Seq.filter (fun x -> not <| List.isEmpty x)
+        |> Seq.toList
+
     [(0.0<M>, 0.0<M>, 0.0<M>)]
 
 let test = 
     calcSecurity [30.0<MHz>(*; 2.0<MHz>; 3.0<MHz>*)] [40.5<dB>(*; 4.0<dB>; 5.0<dB>*)] [8.0<dB>(*; 6.0<dB>; 7.0<dB>*)]
     calcProtection [30.0<MHz>(*; 2.0<MHz>; 3.0<MHz>*)] [40.0<dB>(*; 4.0<dB>; 5.0<dB>*)] [10.0<dB>(*; 6.0<dB>; 7.0<dB>*)] [32.0<dB>] [25.0<dB>] [20.0<M>]
-    calcEffective [30.0<MHz>(*; 2.0<MHz>; 3.0<MHz>*)] [40.5<dB>(*; 4.0<dB>; 5.0<dB>*)] [8.0<dB>(*; 6.0<dB>; 7.0<dB>*)]
+    calcEffective [30.0<MHz>(*; 2.0<MHz>; 3.0<MHz>*)] [40.5<dB>(*; 4.0<dB>; 5.0<dB>*)] [8.0<dB>(*; 6.0<dB>; 7.0<dB>*)] None
     

@@ -11,6 +11,8 @@ module Measure =
     type mkV
     [<Measure>]
     type V
+    [<Measure>]
+    type s = /MHz
     
     let convertDBtoMkV ( temp : float<dB> ) = 10.0 ** (0.05<dB^-1> * temp) * 1.0<mkV/M>
     let listToStr list = string list
