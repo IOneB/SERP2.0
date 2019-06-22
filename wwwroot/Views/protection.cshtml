@@ -3,67 +3,128 @@
 @{
     Layout = "_Layout";
 }
+    <section id="line-section">
+
+        <div class="card-body card card-cascade narrower z-depth-0 dark-card-admin text-white">
+            <div class="view view-cascade gradient-card-header light-blue lighten-1" style="margin-bottom:20px; margin-top: -2em;">
+                <h1 class="h4-responsive mb-0 font-weight-bold" style="font-size:140% !important;">Параметры линии</h1>
+            </div>
+            <h5 style="display:inline-block">Количество измеренных значений</h5>
+            <div class="col" style="margin-bottom:15px;">
+                <form class="range-field row">
+                    <div class="col col-md-3">1</div>
+                    <div class="col col-md-3">2</div>
+                    <div class="col col-md-3">3</div>
+                    <div class="col col-md-2">4</div>
+                    <div class="col-2 col-md" style="text-align:right;">5</div>
+                    <input id="count" type="range" value="3" min="1" max="5" onchange="selectCount(this.value)">
+                </form>
+            </div>
+            <div class="col" style="margin-bottom:15px;">
+                <div class="md-form form-sm">
+                    <input class="form-check-input" type="checkbox" id="checkbox-damp" />
+                    <label id="enable-damp" style="color:white; font-size:1.2em;" class="form-check-label" for="checkbox-damp">Не задавать затухание сигнала</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6 col-md-3">
+                    <div>
+                        <h4 style="display:inline-block">Частота</h4>
+                        <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
+                    </div>
+                    @for (int i = 1; i <= 5; i++){
+                    <div class="col-md-12 mb-12 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))" @(i>
+                        3? "style=display:none;": "")>
+                        <div class="md-form">
+                            <input type="text" id=@("freq"+i) class="form-control">
+                            <label for=@("freq"+i) class="">@i частота</label>
+                        </div>
+                    </div>
+                    }
+                </div>
+                <div class="col-6 col-md-3 damped">
+                    <div>
+                        <h4 style="display:inline-block">U1</h4>
+                        <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за... мкВ" class="fas fa-question-circle"> </i>
+                    </div>
+                    @for (int i = 1; i <= 5; i++){
+                    <div class="col-md-12 mb-12 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))" @(i>
+                        3? "style=display:none;": "")>
+                        <div class="md-form">
+                            <input type="text" id=@("u1"+i) class="form-control damped">
+                            <label for=@("u1"+i) class="damped">@i напряжение</label>
+                        </div>
+                    </div>
+                    }
+                </div>
+                <div class="col-6 col-md-3 damped">
+                    <div>
+                        <h4 style="display:inline-block">U2</h4>
+                        <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за... мкВ" class="fas fa-question-circle"> </i>
+                    </div>
+                    @for (int i = 1; i <= 5; i++){
+                    <div class="col-md-12 mb-12 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))" @(i>
+                        3? "style=display:none;": "")>
+                        <div class="md-form">
+                            <input type="text" id=@("u2"+i) class="form-control damped">
+                            <label for=@("u2"+i) class="damped">@i напряжение</label>
+                        </div>
+                    </div>
+                    }
+                </div>
+                <div class="col-6 col-md-3 damped">
+                    <div>
+                        <h4 style="display:inline-block">Длина линии</h4>
+                        <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
+                    </div>
+                    @for (int i = 1; i <= 5; i++){
+                    <div class="col-md-12 mb-12 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))" @(i>
+                        3? "style=display:none;": "")>
+                        <div class="md-form">
+                            <input type="text" id=@("l"+i) class="form-control damped">
+                            <label for=@("l"+i) class="damped">@i длина</label>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+<br />
 
 <section class="">
     <div class="card-body card card-cascade narrower z-depth-0 dark-card-admin text-white">
 
         <div class="view view-cascade gradient-card-header light-blue lighten-1" style="margin-bottom:20px; margin-top: -2em;">
-            <h1 class="h4-responsive mb-0 font-weight-bold" style="font-size:140% !important;">Форма расчета оценки защищенности</h1>
-        </div>
-        <h5 style="display:inline-block">Количество измеренных значений</h5>
-        <div class="col" style="margin-bottom:15px;">
-            <form class="range-field row">
-                <div class="col col-md-3">1</div>
-                <div class="col col-md-3" >2</div>
-                <div class="col col-md-3">3</div>
-                <div class="col col-md-2">4</div>
-                <div class="col-2 col-md">5</div>
-                <input id="count" type="range" value="5" min="1" max="5" onchange="selectCount(this.value)">
-            </form>
+            <h1 class="h4-responsive mb-0 font-weight-bold" style="font-size:140% !important;">Форма расчета оценки защищенности от наводок</h1>
         </div>
 
-        <!--Частоты-->
         <div class="pb-5">
-            <h5 style="display:inline-block">Частоты (МГц)</h5>
+            <h5 style="display:inline-block">Напряжение сигнала в линии (дБ)</h5>
             <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
         </div>
 
         <div class="row">
             @for (int i = 1; i <= 5; i++){
-            <div class="col-md-3 mb-3 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => "lvl" + item))">
-                <div class="md-form">
-                    <input type="text" id=@("freq"+i) class="form-control">
-                    <label for=@("freq"+i) class="">@i частота</label>
-                </div>
-            </div>
-            }
-        </div>
-
-        <div class="pb-5">
-            <h5 style="display:inline-block">Напряженности поля (дБ)</h5>
-            <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
-        </div>
-
-        <!--Напряженности-->
-        <div class="row">
-            @for (int i = 1; i <= 5; i++){
-            <div class="col-md-3 mb-3 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))">
+            <div class="col-md-3 mb-3 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))" @(i>
+                3? "style=display:none;": "")>
                 <div class="md-form">
                     <input type="text" id=@("tens"+i) class="form-control">
-                    <label for=@("tens"+i) class="">@i напряженность</label>
+                    <label for=@("tens"+i) class="">@i напряжение</label>
                 </div>
             </div>
             }
         </div>
 
-        <!--Напряженности поля шума-->
         <div class="pb-5">
-            <h5 style="display:inline-block">Напряженности поля шума (дБ)</h5>
+            <h5 style="display:inline-block">Напряжение шума в линии (дБ)</h5>
             <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
         </div>
         <div class="row">
             @for (int i = 1; i <= 5; i++){
-            <div class="col-md-3 mb-3 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))">
+            <div class="col-md-3 mb-3 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))" @(i>
+                3? "style=display:none;": "")>
                 <div class="md-form">
                     <input type="text" id=@("noise-tens"+i) class="form-control">
                     <label for=@("noise-tens"+i) class="">@i значение</label>
@@ -77,52 +138,150 @@
     </div>
 
 </section>
-
-<section id="result-section" class="" hidden>
+<br />
+<section id="result-section" style="display:none;">
 
     <div class="card-body card card-cascade narrower z-depth-0 dark-card-admin text-white">
         <div class="view view-cascade gradient-card-header light-blue lighten-1" style="margin-bottom:20px; margin-top: -2em;">
             <h1 class="h4-responsive mb-0 font-weight-bold" style="font-size:140% !important;">Результаты</h1>
         </div>
+
+        @for (int i = 1; i <= 5; i++){
+        <div class="row @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " answer" + item))" style="display:none;">
+            <div class="col-lg-8 col-md-8 mb-8">
+                <h3>Решение для @i набора (частота: <span id="freq-@i"></span> МГц) </h3>
+                <p>Затухание сигнала: Kp = <span id="kp-@i"></span></p>
+                <p>Показатель защищенности: <span id="def-@i"></span></p>
+                <p>Расчитанное значение напряжения: <span id="uc-@i"></span> дБ</p>
+                <p>Расчитанный пробег сигнала в линии: <span id="result-@i"></span> м</p>
+            </div>
+        </div>
+        <hr id="line-@i" style="background-color: white; display: none;" />
+        <br />
+        }
+        <canvas id="lineChart"></canvas>
+
+        <section class="">
+            <input type="hidden" id="resultid" />
+            <button id="go-button" type="button" style="margin-top:20px;" onclick="getReport()" class="btn btn-indigo waves-effect float-left waves-light">Сгенерировать отчет</button>
+        </section>
     </div>
 </section>
 
 
 
 @section customScripts{
-    <script>
-    function selectCount(value) {
-        $(".lvl5").fadeOut();
-        $(".lvl" + value).fadeIn();
-            }
+<script>
+    var data = {
+        labels: [],
+        datasets: [{
+            label: "Пробег сигнала",
+            // data: result,
+            data: [],
+            backgroundColor: [
+                'rgba(105, 0, 132, .2)',
+            ],
+            borderColor: [
+                'rgba(200, 99, 132, .7)',
+            ],
+            borderWidth: 2
+        }]
+    };
+    var ctx = document.getElementById("lineChart").getContext("2d");
+    var myNewChart = new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true
+        }
+    });
     function go() {
         var count = $("#count").val();
+        var u1 = [];
+        var u2 = [];
+        var l = [];
         var freqs = [];
         var tens = [];
         var noiseTens = [];
         var addEl = function (source, arr) {
             var val = parseFloat($(source).val());
             if (isNaN(val) || val < 0)
-                val = 0;
+                val = 10;
             arr.push(val);
         };
-        for (var i = 0; i < count; i++)
-        {
+        for (var i = 0; i < count; i++) {
             addEl("#freq" + (i + 1), freqs);
             addEl("#tens" + (i + 1), tens);
             addEl("#noise-tens" + (i + 1), noiseTens);
+            if ($('#checkbox-damp').is(':checked')) {
+                u1.push(10);
+                u2.push(1);
+                l.push(20);
+            }
+            else {
+                addEl("#u1" + (i + 1), u1);
+                addEl("#u2" + (i + 1), u2);
+                addEl("#l" + (i + 1), l);
+            }
         }
         $.post("/protection", {
-            freqs: freqs,
-            tens: tens,
-            noiseTens: noiseTens,
-            count: count,
-        }, function () {
-            alert("Ура");
+            Freqs: freqs,
+            Tens: tens,
+            NoiseTens: noiseTens,
+            U1: u1,
+            U2: u2,
+            L: l,
+            Count: count,
+            ResultType: 1
+        }, function (res) {
+            $("#result-section").show();
+            for (var i = 1; i <= 5; i++)
+                $("#line-" + i).hide();
+            var result = res.protectionResult.fields[0];
+            var freqs = res.freqs;
+            var kp = res.kp.fields[0];
+            var def = res.def.fields[0];
+            var uc = res.uc.fields[0];
+            var id = res.id.fields[0];
+
+            $(".answer5").fadeOut();
+            $(".answer" + count).fadeIn();
+
+            for (var i = 1; i <= count; i++) {
+                $("#line-" + i).show();
+
+                $("#kp-" + i).html(Math.round(kp[i - 1] * 100) / 100);
+                $("#def-" + i).html(Math.round(def[i - 1] * 100) / 100);
+                $("#freq-" + i).html(freqs[i - 1]);
+                $("#uc-" + i).html(Math.round(uc[i - 1] * 100) / 100);
+                $("#result-" + i).html(Math.round(result[i - 1] * 100) / 100);
+            }
+            $("#resultid").html(id);
+
+            if (count == 1) {
+                freqs.push(freqs[0]);
+                result.push(result[0]);
+            }
+            data.labels = freqs;
+            data.datasets[0].data = result;
+            myNewChart.chart.update();
         })
             .fail(function (xhr, status, error) {
                 alert(xhr.responseText.replace(/['"«»]/g, ''));
             });
     }
-    </script>
+</script>
+<script>
+    $('#enable-damp').click(function () {
+        $('.damped').toggleClass("disabled");
+    });
+    function getReport() {
+        var id = $("#resultid").text();
+        window.open("result/" + id);
+    }
+    function selectCount(value) {
+        $(".lvl5").fadeOut();
+        $(".lvl" + value).fadeIn();
+    }
+</script>
 }

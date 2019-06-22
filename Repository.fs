@@ -30,5 +30,5 @@ let createUser (model : RegisterModel) =
 
 let saveResult security =
     use db = new UserContext()
-    db.Results.Add(security) |> ignore
-    db.SaveChanges true
+    let saveRes = db.Results.Add(security)
+    db.SaveChanges true, saveRes.Entity.ResultID

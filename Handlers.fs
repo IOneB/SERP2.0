@@ -1,5 +1,7 @@
 ﻿module Handlers
 
+open System
+open System.IO
 open Actions
 open Giraffe
 open SERP.Entities
@@ -93,8 +95,11 @@ let profileHandler : HttpHandler =
 let getResultHandler _ =
     text "Ok"
 
-let getUserResultHandler next ctx =
-    text "Ok" next ctx
+let getUserResultHandler id next (ctx : HttpContext)=
+    if Path.Combine(reportsRoot, string id + ".docx") |> File.Exists  then 
+        ctx.SetContentType ("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+        (streamFile true "Reports/1.docx" None None) next ctx
+    else text "404" next ctx
 
 let securityHandler (model : APIModel) : HttpHandler = 
     fun next ctx ->
@@ -108,6 +113,7 @@ let securityHandler (model : APIModel) : HttpHandler =
                         L2 = third5 result
                         Zone = fourth5 result
                         Ec = fivth result
+                        Date = Some DateTime.Now
                 }
             let security = 
                 {
@@ -119,38 +125,44 @@ let securityHandler (model : APIModel) : HttpHandler =
                         ResultValues = listToStr response.SecureResult.Value
                         UserID = (getUserByName ctx.User.Identity.Name).Value.UserID
                 }    
-            return! 
-                (match saveResult security with
-                    | -1 -> parsingError "Не удалось сохранить результат, попробуйте позже"
-                    | _ -> json response) next ctx
+            return! json {response with Id = Some 1} next ctx
+                (*match saveResult security with
+                    | (-1, _) -> parsingError "Не удалось сохранить результат, попробуйте позже"
+                    | (_, id) -> json {response with Id = Some id}*) 
         }
 
 let protectionHandler (model:APIModel) : HttpHandler =
     fun next ctx ->
-(*        task {
-            let result = calcSecurity model.Freqs model.Tens model.NoiseTens
+        task {
+            let result = calcProtection model.Freqs model.Tens model.NoiseTens model.U1.Value model.U2.Value model.L.Value
             let response =
                 {
                     model with
-                        SecureResult = first4 result
-                        L1 = second4 result
-                        L2 = third4 result
+                        ProtectionResult = first4 result
+                        Kp = second4 result
+                        Def = third4 result
+                        Uc = fourth4 result
+                        Date = Some DateTime.Now
                 }
             let protection = 
                 {
                     defaultResult with
+                        ResultType = ResultType.Protection
                         Freqs = listToStr model.Freqs
                         Tens = listToStr model.Tens
                         NoiseTens = listToStr model.NoiseTens
+                        U1 = listToStr response.U1
+                        U2 = listToStr response.U2
+                        L = listToStr response.L
                         Count = model.Count
-                        ResultValues = listToStr response.SecureResult
+                        ResultValues = listToStr response.ProtectionResult.Value
+                        UserID = (getUserByName ctx.User.Identity.Name).Value.UserID
                 }    
-            return! 
-                (match saveResult protection with
-                    | -1 -> parsingError "Не удалось сохранить результат, попробуйте позже"
-                    | _ -> json response) next ctx
-        } *)
-        text "ура" next ctx
+            return! json {response with Id = Some 1} next ctx
+                (*match saveResult protection with
+                    | (-1, _) -> parsingError "Не удалось сохранить результат, попробуйте позже"
+                    | (_, id) -> json {response with Id = Some id}*) 
+        }
 
 let effectiveHandler (model:APIModel) : HttpHandler =
     fun next ctx ->

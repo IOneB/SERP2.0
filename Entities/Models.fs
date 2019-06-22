@@ -21,9 +21,9 @@ module Measure =
         |> Seq.toList
         |> List.map int
 
-open System.ComponentModel.DataAnnotations
 open Giraffe
 open Measure
+open System
 
 type ResultType = Security = 0 | Protection = 1| Effective = 2
 type Zone = Near = 0 | Intermediate = 1 | Far = 2
@@ -71,6 +71,8 @@ type [<CLIMutable>] LoginModel =
 
 type [<CLIMutable>] APIModel =
     {
+        Id: option<int>
+        Date: option<DateTime>
         Freqs: float<MHz> list
         Tens: float<dB> list
         NoiseTens: float<dB> list
@@ -85,13 +87,14 @@ type [<CLIMutable>] APIModel =
 
         ProtectionResult: option<float<M> list>
         Uc: option<float<dB> list>
-        U1: option<float<mkV> list> 
-        U2: option<float<mkV> list> 
+        U1: option<float<dB> list> 
+        U2: option<float<dB> list> 
         L: option<float<M> list> 
         Kp: option<float<dB/M> list> 
         Def: option<float<dB> list>
 
-        EffectiveResult: option<float<mkV/M> list>
+        EffectiveResult: option<float list>
+        DampingFactor: option<float list>
     }
 
     member this.HasErrors() = None
@@ -103,8 +106,19 @@ type [<CLIMutable>] APIModel =
             | None     -> Ok this
 
 type [<CLIMutable>] User = { UserID:int; Name:string; Password:string; UserName: string; Role : string; Group: string}
-and [<CLIMutable>] Result = { ResultID:int; Freqs: string; Tens: string; NoiseTens: string; Count: int; UserID: int; ResultType: ResultType; ResultValues: string; U1: string; U2: string; L: string }
+and [<CLIMutable>] Result = { ResultID:int; Freqs: string; Tens: string; NoiseTens: string; Count: int; UserID: int; ResultType: ResultType; ResultValues: string; U1: string; U2: string; L: string; Date: DateTime }
+
+type GeneratorParameters = 
+    {
+        tau: float<s>
+        R: float<M>
+        Tension: float<dB>
+        RemoteTens: float<dB>
+        Frequency: float<MHz>
+        Quality: float
+        BandWith: float<MHz>
+    }
 
 module Default = 
     let defaultUser = { UserID = 0; Name="Joe"; Password=""; UserName=""; Role="User"; Group = ""}
-    let defaultResult = { ResultID = 0; Freqs = ""; Tens = ""; NoiseTens = ""; Count = 0; UserID = -1; ResultType = ResultType.Security; ResultValues = ""; U1 = ""; U2 = ""; L = ""}
+    let defaultResult = { ResultID = 0; Freqs = ""; Tens = ""; NoiseTens = ""; Count = 0; UserID = -1; ResultType = ResultType.Security; ResultValues = ""; U1 = ""; U2 = ""; L = ""; Date = DateTime.Now}

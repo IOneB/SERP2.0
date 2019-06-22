@@ -20,7 +20,7 @@ let userRouter = subRoute "/user" (choose [
     userRoute "/protection"        >=> razorHtmlView "protection" None None None
     userRoute "/effective"         >=> razorHtmlView "effective" None None None
 
-    userRoute "/result"            >=> getUserResultHandler
+    routef "/result/%i" getUserResultHandler
     ])
 
 let webApp : HttpHandler =
