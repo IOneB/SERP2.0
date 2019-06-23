@@ -125,10 +125,12 @@ let securityHandler (model : APIModel) : HttpHandler =
                         ResultValues = listToStr response.SecureResult.Value
                         UserID = (getUserByName ctx.User.Identity.Name).Value.UserID
                 }    
-            return! json {response with Id = Some 1} next ctx
-                (*match saveResult security with
-                    | (-1, _) -> parsingError "Не удалось сохранить результат, попробуйте позже"
-                    | (_, id) -> json {response with Id = Some id}*) 
+            return! (match saveResult security with
+                        | (-1, _) -> 
+                            parsingError "Не удалось сохранить результат, попробуйте позже"
+                        | (_, id) -> 
+                            generateSecurityReport model result id
+                            json {response with Id = Some id}) next ctx
         }
 
 let protectionHandler (model:APIModel) : HttpHandler =
@@ -151,42 +153,52 @@ let protectionHandler (model:APIModel) : HttpHandler =
                         Freqs = listToStr model.Freqs
                         Tens = listToStr model.Tens
                         NoiseTens = listToStr model.NoiseTens
-                        U1 = listToStr response.U1
-                        U2 = listToStr response.U2
-                        L = listToStr response.L
+                        U1 = listToStr response.U1.Value
+                        U2 = listToStr response.U2.Value
+                        L = listToStr response.L.Value
                         Count = model.Count
                         ResultValues = listToStr response.ProtectionResult.Value
                         UserID = (getUserByName ctx.User.Identity.Name).Value.UserID
                 }    
             return! json {response with Id = Some 1} next ctx
                 (*match saveResult protection with
-                    | (-1, _) -> parsingError "Не удалось сохранить результат, попробуйте позже"
-                    | (_, id) -> json {response with Id = Some id}*) 
+                    | (-1, _) -> 
+                        parsingError "Не удалось сохранить результат, попробуйте позже"
+                    | (_, id) -> 
+                        generateProtectionReport model result id
+                        json {response with Id = Some id}*) 
         }
 
 let effectiveHandler (model:APIModel) : HttpHandler =
     fun next ctx ->
-    (*    task {
-            let result = calcSecurity model.Freqs model.Tens model.NoiseTens
+        task {
+            let generator = { tau = model.tau.Value; RemoteTens = model.RemoteTensGen.Value; Tension = model.Tension.Value; Frequency = model.Frequency.Value; R = model.R.Value; Quality = model.Quality.Value; BandWith = model.BandWith.Value}
+            let result = calcEffective model.Freqs model.Tens model.NoiseTens (defaultArg model.RemoteTens []) generator
             let response =
                 {
                     model with
-                        SecureResult = first4 result
-                        L1 = second4 result
-                        L2 = third4 result
+                        EffectiveResult = first4 result
+                        DampingFactor = second4 result
+                        TensDamping = third4 result
+                        Date = Some DateTime.Now
                 }
             let effective = 
                 {
                     defaultResult with
+                        ResultType = ResultType.Effective
                         Freqs = listToStr model.Freqs
                         Tens = listToStr model.Tens
                         NoiseTens = listToStr model.NoiseTens
+                        RemoteTens = listToStr model.RemoteTens.Value
+                        GeneratorParameters = parseGen generator
                         Count = model.Count
-                        ResultValues = listToStr response.SecureResult
+                        ResultValues = listToStr response.EffectiveResult.Value
+                        UserID = (getUserByName ctx.User.Identity.Name).Value.UserID
                 }    
-            return! 
-                (match saveResult effective with
-                    | -1 -> parsingError "Не удалось сохранить результат, попробуйте позже"
-                    | _ -> json response) next ctx
-        } *)
-        text "ура" next ctx
+            return! json {response with Id = Some 1} next ctx
+                (*match saveResult effective with
+                    | (-1, _) -> parsingError "Не удалось сохранить результат, попробуйте позже"
+                    | (_, id) -> 
+                        generateEffectiveReport model result id
+                        json {response with Id = Some id}*) 
+        }

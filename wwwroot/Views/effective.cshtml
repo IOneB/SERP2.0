@@ -3,22 +3,95 @@
 @{
     Layout = "_Layout";
 }
+<section id="gen-section">
+    <div class="row mh mb-6">
+        <div id="gen1" class="col-lg-7 col-md-7 mb-7" style="margin-bottom:1.2em;">
+            <div class="dark-card-admin text-white card card-cascade narrower">
+                <div class="view view-cascade gradient-card-header blue">
+                    <h5 class="mb-0">Параметры</h5>
+                </div>
+                <div class="card-body card-body-cascade text-center row">
+                    <div class="col-md-6 mb-6">
+                        <div class="md-form">
+                            <input type="text" id="tau" class="form-control">
+                            <label for="tau" class="" data-toggle="tooltip" title="Длительность импульса сигнала. Измеряется в мкс. Может принимать значения порядка нс">Импульс</label>
+                        </div>
+                        <div class="md-form">
+                            <input type="text" id="gfreq" class="form-control">
+                            <label for="gfreq" class="" data-toggle="tooltip" title="Частота создаваемого генератором излучения. Влияет на характеристики поля. Измеряется в МГц">Частота</label>
+                        </div>
+                        <div class="md-form">
+                            <input type="text" id="gtens" class="form-control">
+                            <label for="gtens" class="" data-toggle="tooltip" title="Основной параметр создаваемого шума. Влияет на общую фоновую электромагнитную обстановку. Измеряется в дБ">Напряженность поля</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-6">
+                        <div class="md-form">
+                            <input type="text" id="quality" class="form-control">
+                            <label for="quality" class="quality" data-toggle="tooltip" title="Параметр генерируемого устройством маскирующего шума. Безразмерная величина. Показывает насколько сложно отфильтровать шум. По умолчанию рекомендуется принять равным 0.6">Качество шума</label>
+                        </div>
+                        <div class="md-form">
+                            <input type="text" id="df" class="form-control">
+                            <label for="df" class="" data-toggle="tooltip" title="Полоса пропускания измерительного устройства при замерах параметров. Измеряется в кГц">Полоса пропускания</label>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-12" style="margin-top:1.2em;">
+                        <div>
+                            <h5 style="display:inline-block;">На удалении</h5>
+                            <i data-toggle="tooltip" data-placement="right" title="Для расчета коэфициента затухания необходимо провести замер значения напряженности на удалении в ближайшей точке к КЗ" class="fas fa-question-circle"> </i>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-6">
+                        <div class="md-form">
+                            <input type="text" id="r" class="form-control">
+                            <label for="r" class="">Расстояние</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-6">
+                        <div class="md-form">
+                            <input type="text" id="rgtens" class="form-control">
+                            <label for="rgtens" class="">Напряженность</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-lg-5 col-md-5 mb-5">
+            <div id="gen2" class="dark-card-admin text-white card card-cascade narrower">
+                <div class="view view-cascade gradient-card-header blue">
+                    <h5 class="mb-0">Генератор шума</h5>
+                </div>
+                <div class="card-body card-body-cascade text-center">
+                    <p style="text-align:justify;text-indent: 1.5em;">
+                        При работе технических устройств могут появляться сигналы ПЭМИН (побочные электромагнитные излучения и наводки), содержащие обрабатываемую информацию конфиденциального характера. Эти сигналы могут быть перехвачены с помощью специальной аппаратуры.</p>
+                    <p style="text-align:justify;text-indent: 1.5em;">
+                        Генераторы помех предназначены для обеспечения защиты информации от утечки по каналам ПЭМИН путем создания на границе контролируемой зоны широкополосной шумовой электромагнитной помехи, которая зашумляет побочные излучения защищаемого объекта.
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<br />
 
 <section class="">
     <div class="card-body card card-cascade narrower z-depth-0 dark-card-admin text-white">
 
         <div class="view view-cascade gradient-card-header light-blue lighten-1" style="margin-bottom:20px; margin-top: -2em;">
-            <h1 class="h4-responsive mb-0 font-weight-bold" style="font-size:140% !important;">Форма расчета оценки защищенности</h1>
+            <h1 class="h4-responsive mb-0 font-weight-bold" style="font-size:140% !important;">Форма расчета эффективности защиты</h1>
         </div>
         <h5 style="display:inline-block">Количество измеренных значений</h5>
         <div class="col" style="margin-bottom:15px;">
             <form class="range-field row">
                 <div class="col col-md-3">1</div>
-                <div class="col col-md-3" >2</div>
+                <div class="col col-md-3">2</div>
                 <div class="col col-md-3">3</div>
                 <div class="col col-md-2">4</div>
-                <div class="col-2 col-md">5</div>
-                <input id="count" type="range" value="5" min="1" max="5" onchange="selectCount(this.value)">
+                <div class="col-2 col-md" style="text-align:right;">5</div>
+                <input id="count" type="range" value="3" min="1" max="5" onchange="selectCount(this.value)">
             </form>
         </div>
 
@@ -30,7 +103,8 @@
 
         <div class="row">
             @for (int i = 1; i <= 5; i++){
-            <div class="col-md-3 mb-3 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => "lvl" + item))">
+            <div class="col-md-3 mb-3 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))" @(i>
+                3? "style=display:none;": "")>
                 <div class="md-form">
                     <input type="text" id=@("freq"+i) class="form-control">
                     <label for=@("freq"+i) class="">@i частота</label>
@@ -40,30 +114,13 @@
         </div>
 
         <div class="pb-5">
-            <h5 style="display:inline-block">Напряженности поля (дБ)</h5>
-            <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
-        </div>
-
-        <!--Напряженности-->
-        <div class="row">
-            @for (int i = 1; i <= 5; i++){
-            <div class="col-md-3 mb-3 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))">
-                <div class="md-form">
-                    <input type="text" id=@("tens"+i) class="form-control">
-                    <label for=@("tens"+i) class="">@i напряженность</label>
-                </div>
-            </div>
-            }
-        </div>
-
-        <!--Напряженности поля шума-->
-        <div class="pb-5">
-            <h5 style="display:inline-block">Напряженности поля шума (дБ)</h5>
+            <h5 style="display:inline-block">Напряженность поля помех</h5>
             <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
         </div>
         <div class="row">
             @for (int i = 1; i <= 5; i++){
-            <div class="col-md-3 mb-3 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))">
+            <div class="col-md-3 mb-3 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))" @(i>
+                3? "style=display:none;": "")>
                 <div class="md-form">
                     <input type="text" id=@("noise-tens"+i) class="form-control">
                     <label for=@("noise-tens"+i) class="">@i значение</label>
@@ -71,58 +128,238 @@
             </div>
             }
         </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-6">
+                <div class="pb-5">
+                    <h5 style="display:inline-block">Напряженности поля тестового сигнала</h5>
+                    <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
+                </div>
+
+                <div class="row ">
+                    @for (int i = 1; i <= 5; i++){
+                    <div class="col-md-5 mb-5 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))" @(i>
+                        3? "style=display:none;": "")>
+                        <div class="md-form">
+                            <input type="text" id=@("tens"+i) class="form-control">
+                            <label for=@("tens"+i) class="">@i напряженность</label>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            <div class="col-md-6 mb-6">
+                <div class="pb-5">
+                    <h5 style="display:inline-block">Напряженности на границе КЗ</h5>
+                    <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
+                </div>
+
+                <div class="row">
+                    @for (int i = 1; i <= 5; i++){
+                    <div class="col-md-5 mb-5 @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " lvl" + item))" @(i>
+                        3? "style=display:none;": "")>
+                        <div class="md-form">
+                            <input type="text" id=@("rtens"+i) class="form-control">
+                            <label for=@("rtens"+i) class="">@i напряженность</label>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+
         <section class="mb-5 pb-4">
             <button id="go-button" type="button" onclick="go()" class="btn btn-indigo waves-effect float-left waves-light">Рассчитать!</button>
         </section>
     </div>
-
 </section>
 
-<section id="result-section" class="" hidden>
+<br />
+
+<section id="result-section" style="display:none;">
 
     <div class="card-body card card-cascade narrower z-depth-0 dark-card-admin text-white">
         <div class="view view-cascade gradient-card-header light-blue lighten-1" style="margin-bottom:20px; margin-top: -2em;">
             <h1 class="h4-responsive mb-0 font-weight-bold" style="font-size:140% !important;">Результаты</h1>
         </div>
+
+        @for (int i = 1; i <= 5; i++){
+        <div class="row @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " answer" + item))" style="display:none;">
+            <div class="col-lg-8 col-md-8 mb-8">
+                <h3>Решение для @i набора частот</h3>
+                <p>Показатель эффективности защиты: <span id="result-@i"></span></p>
+                <div class="text-center">
+                    <div id=@("graph-container"+@i)>
+                    <span class="min-chart" id=@("chart-"+@i) data-percent="0"><span id=@("percent"+@i) class="percent"></span></span>
+                    </div>
+                    <h5><span class="label badge" id=@("equal-"+@i)>Соответствие норме</span></h5>
+                </div>
+            </div>
+        </div>
+        <hr id="line-@i" style="background-color: white; display: none;" />
+        <br />
+        }
+        <canvas id="lineChart"></canvas>
+
+        <section class="">
+            <input type="hidden" id="resultid" />
+            <button id="go-button" type="button" style="margin-top:20px;" onclick="getReport()" class="btn btn-indigo waves-effect float-left waves-light">Сгенерировать отчет</button>
+        </section>
     </div>
 </section>
 
 
 
 @section customScripts{
-    <script>
-    function selectCount(value) {
-        $(".lvl5").fadeOut();
-        $(".lvl" + value).fadeIn();
-            }
+<script>
+    var data = {
+        labels: [],
+        datasets: [{
+            label: "Показатель эффективности",
+            // data: result,
+            data: [],
+            backgroundColor: [
+                'rgba(105, 0, 132, .2)',
+            ],
+            borderColor: [
+                'rgba(200, 99, 132, .7)',
+            ],
+            borderWidth: 2
+        }]
+    };
+    var ctx = document.getElementById("lineChart").getContext("2d");
+    var myNewChart = new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true
+        }
+    });
     function go() {
         var count = $("#count").val();
         var freqs = [];
+        var ox = [];
         var tens = [];
+        var rtens = [];
         var noiseTens = [];
-        var addEl = function (source, arr) {
+        var parseValue = function (source) {
             var val = parseFloat($(source).val());
             if (isNaN(val) || val < 0)
-                val = 0;
-            arr.push(val);
+                val = 1;
+            return val;
+        }
+        var addEl = function (source, arr) {
+            arr.push(parseValue(source));
         };
-        for (var i = 0; i < count; i++)
-        {
+        for (var i = 0; i < count; i++) {
             addEl("#freq" + (i + 1), freqs);
             addEl("#tens" + (i + 1), tens);
             addEl("#noise-tens" + (i + 1), noiseTens);
+            addEl("#rtens" + (i + 1), rtens);
         }
         $.post("/effective", {
-            freqs: freqs,
-            tens: tens,
-            noiseTens: noiseTens,
-            count: count,
-        }, function () {
-            alert("Ура");
+            Freqs: freqs,
+            Tens: tens,
+            NoiseTens: noiseTens,
+            RemoteTens: rtens,
+            Count: count,
+            ResultType: 2,
+            tau: parseValue("#tau") / 100,
+            R: parseValue("#r"),
+            Tension: parseValue("#gtens"),
+            RemoteTensGen: parseValue("#rgtens"),
+            Frequency: parseValue("#gfreq"),
+            Quality: parseValue("#quality"),
+            BandWith: parseValue("#df") / 1000
+        }, function (res) {
+            $("#result-section").show();
+            for (var i = 1; i <= 5; i++)
+                $("#line-" + i).hide();
+            var result = res.effectiveResult.fields[0];
+            var id = res.id.fields[0];
+            $(".answer5").fadeOut();
+            $(".answer" + result.length).fadeIn();
+                for (var i = 1; i <= result.length; i++) {
+                    $('line-' + i).show();
+                    var effective = Math.round(result[i-1] * 100) / 100;
+                    var percent = 0;
+                    $("#result-" + i).html(effective);
+                    ox.push(i);
+                    if (effective < 0.3)
+                        percent = 100;
+                    else if (effective > 0.89999)
+                        percent = 0;
+                    else {
+                        effective -= 0.3;
+                        percent = 100 - (effective * 100.0 / 0.6);
+                    }
+
+                    $('#chart-' + i).remove();
+                    $('#graph-container' + i).append('<span class="min-chart" id="chart-' + i + '" data-percent=' + percent + '"><span id="percent' + i + '" class="percent">' + Math.round(percent) + '</span></span>');
+                    $("#equal-" + i)
+                        .removeClass("green")
+                        .removeClass("orange")
+                        .removeClass("red");
+                    if (percent > 50) {
+                        $("#equal-" + i).addClass("green");
+                        $("#chart-" + i).easyPieChart({
+                            barColor: "#4caf50",
+                            onStep: function (from, to, perc) {
+                                $("#percent" + i).text(Math.round(percent));
+                            }
+                        });
+                    }
+                    else if (percent > 25) {
+                        $("#equal-" + i).addClass("orange");
+                        $("#chart-" + i).easyPieChart({
+                            barColor: "#ffa500",
+                            onStep: function (from, to, perc) {
+                                $("#percent" + i).text(Math.round(percent));
+                            }
+                        });
+                    }
+                    else {
+                        $("#equal-" + i).addClass("red");
+                            $("#chart-" + i).easyPieChart({
+                            barColor: "#ff0500",
+                            onStep: function (from, to, perc) {
+                                $("#percent" + i).text(Math.round(percent));
+                            }
+                        });
+                    }
+                }
+            $("#resultid").html(id);
+
+            if (result.length == 1) {
+                ox.push(1);
+                result.push(result[0]);
+            }
+            data.labels = ox;
+            data.datasets[0].data = result;
+            myNewChart.chart.update();
         })
             .fail(function (xhr, status, error) {
                 alert(xhr.responseText.replace(/['"«»]/g, ''));
             });
     }
-    </script>
+</script>
+<script>
+    function getReport() {
+        var id = $("#resultid").text();
+        window.open("result/" + id);
+    }
+    function selectCount(value) {
+        $(".lvl5").fadeOut();
+        $(".lvl" + value).fadeIn();
+    }
+    $(document).ready(function () {
+        for (var i = 0; i < 5; i++)
+            $('#chart-' + i).easyPieChart({
+                barColor: "#4caf50",
+                onStep: function (from, to, percent) {
+                    $("percent" + i).text(Math.round(0));
+                }
+            });
+    });
+</script>
 }

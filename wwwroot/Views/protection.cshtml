@@ -273,7 +273,7 @@
 </script>
 <script>
     $('#enable-damp').click(function () {
-        $('.damped').toggleClass("disabled");
+        $('.damped').toggleClass("disabled").toggleClass("dmp-disabled");
     });
     function getReport() {
         var id = $("#resultid").text();

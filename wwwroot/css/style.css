@@ -18,8 +18,6 @@
     color: white !important;
 }
 
-
-
 #dtMaterialDesignExample_wrapper .row {
     margin-right: 0px;
     margin-left: 0px;
@@ -62,7 +60,7 @@ body {
     min-width: 370px;
 }
 
-.disabled::after {
+.dmp-disabled::after {
     content: '';
     position: absolute;
     width: 100%;
