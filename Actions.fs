@@ -233,66 +233,76 @@ let calcEffective freqs tens noiseTens remoteTens (noiseGen: GeneratorParameters
             | value -> value
             ,y, z, f) 
 
-let generateSecurityReport (model: APIModel) result resultId =
-    let byteArray = File.ReadAllBytes(reportsRoot + "/" + "security.docx")
+let replaceStub i stub (value: float<_> list) text =
+    let value = List.map float value
+    let index = i + 1
+    let reg = new Regex(stub + string index)
+    reg.Replace(text, string value.[i])
+
+let replaceText stub (value: string) text =
+    let reg = new Regex(stub)
+    reg.Replace(text, value)
+
+let createDoc name id = 
+    let byteArray = File.ReadAllBytes(reportsRoot + "/" + name + ".docx")
     do
-        use fs = new FileStream(reportsRoot + "/" + string resultId + ".docx", FileMode.Create) 
+        use fs = new FileStream(reportsRoot + "/" + string id + ".docx", FileMode.Create) 
         use mem = new MemoryStream() 
         mem.Write(byteArray, 0, (int)byteArray.Length) 
         mem.WriteTo(fs) 
 
+let generateSecurityReport (model: APIModel) (result: list<_>) resultId =
+    createDoc "security" resultId
     use wordDoc = WordprocessingDocument.Open(reportsRoot + "/" + string resultId + ".docx", true)
     let docText = 
         use sr = new StreamReader(wordDoc.MainDocumentPart.GetStream())
         sr.ReadToEnd()
     let mutable newText = docText
-    List.iteri (fun i (rad: float<_>, _, _, _, e: float<_>) -> 
-        let index = i + 1
-        let reg = new Regex("f" + string index)
-        newText <- reg.Replace(newText, string model.Freqs.[index])
-        let reg = new Regex("t" + string index)
-        newText <- reg.Replace(newText, string model.Tens.[index])
-        let reg = new Regex("tn" + string index)
-        newText <- reg.Replace(newText, string model.NoiseTens.[index])
-        let reg = new Regex("e" + string index)
-        newText <- reg.Replace(newText, string e)
-        let reg = new Regex("r" + string index)
-        newText <- reg.Replace(newText, string rad)
-        ) 
-        result
-    let reg = new Regex("rmax")
-    newText <- reg.Replace(newText, List.map (fun (_,_,_,_,r) -> r) result |> List.max |> string)
-    let reg = new Regex("date")
-    newText <- reg.Replace(newText, string DateTime.Now)
-    for i in [1..5] do
-        let reg = new Regex("f" + string i)
-        newText <- reg.Replace(newText, "")
-        let reg = new Regex("t" + string i)
-        newText <- reg.Replace(newText, "")
-        let reg = new Regex("tn" + string i)
-        newText <- reg.Replace(newText, "")
-        let reg = new Regex("e" + string i)
-        newText <- reg.Replace(newText, "")
-        let reg = new Regex("r" + string i)
-        newText <- reg.Replace(newText, "")
+    for i in [0..(List.length result) - 1] do
+        newText <-
+            replaceStub i "f" model.Freqs newText
+            |> replaceStub i "t" model.Tens
+            |> replaceStub i "tn" model.NoiseTens
+            |> replaceStub i "e" (fivth result).Value
+            |> replaceStub i "r" (first5 result).Value
+
+    newText <- 
+        List.map (fun (_,_,_,_,r) -> r) result 
+        |> List.max 
+        |> string 
+        |> replaceText "rmax" <| newText
+        |> replaceText "date" (DateTime.Now.ToLongDateString())
+
+    for i in [List.length result..5] do
+        newText <-
+            replaceText ("f"+string i) "" newText
+            |> replaceText ("t"+string i) ""
+            |> replaceText ("tn"+string i) ""
+            |> replaceText ("e"+string i) ""
+            |> replaceText ("r"+string i) ""
     use sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create))
     sw.Write(newText)
-    ()
 
-let generateProtectionReport model result resultId =
-    let byteArray = File.ReadAllBytes(reportsRoot + "/" + "protection.docx")
-    do
-        use fs = new FileStream(reportsRoot + "/" + string resultId + ".docx", FileMode.Create) 
-        use mem = new MemoryStream() 
-        mem.Write(byteArray, 0, (int)byteArray.Length) 
-        mem.WriteTo(fs) 
+
+let generateProtectionReport (model: APIModel) result resultId =
+    createDoc "protection" resultId
     use wordDoc = WordprocessingDocument.Open(reportsRoot + "/" + string resultId + ".docx", true)
     let docText = 
         use sr = new StreamReader(wordDoc.MainDocumentPart.GetStream())
         sr.ReadToEnd()
     let mutable newText = docText
-    List.iteri (fun i (rad: float<_>, k, _, ur ) -> 
+    for i in [0..(List.length result) - 1] do
+        newText <-
+            replaceStub i "f" model.Freqs newText
+            |> replaceStub i "t" model.Tens
+            |> replaceStub i "tn" model.NoiseTens
+            |> replaceStub i "e" (fivth result).Value
+            |> replaceStub i "r" (first5 result).Value
+    (*List.iteri (fun i (rad: float<_>, k, _, ur ) -> 
+        let indexedReplaceStub = replaceStub (i+1)
         let index = i + 1
+        newText <-
+            indexedReplaceStub "f" model.Freqs newText
         let reg = new Regex("f" + string index)
         newText <- reg.Replace(newText, string model.Freqs.[index])
         let reg = new Regex("Ut" + string index)
@@ -310,22 +320,19 @@ let generateProtectionReport model result resultId =
         let reg = new Regex("k" + string index)
         newText <- reg.Replace(newText, string k)
         ) 
-        result
-    let reg = new Regex("date")
-    newText <- reg.Replace(newText, string DateTime.Now)
-    for i in [1..5] do
-        let reg = new Regex("f" + string i)
-        newText <- reg.Replace(newText, "")
-        let reg = new Regex("t" + string i)
-        newText <- reg.Replace(newText, "")
-        let reg = new Regex("tn" + string i)
-        newText <- reg.Replace(newText, "")
-        let reg = new Regex("e" + string i)
-        newText <- reg.Replace(newText, "")
-        let reg = new Regex("r" + string i)
-        newText <- reg.Replace(newText, "")
+        result*)
+    newText <- replaceText "date" (DateTime.Now.ToLongDateString()) newText
+
+    for i in [List.length result..5] do
+        newText <-
+            replaceText ("f"+string i) "" newText
+            |> replaceText ("t"+string i) ""
+            |> replaceText ("tn"+string i) ""
+            |> replaceText ("e"+string i) ""
+            |> replaceText ("r"+string i) ""
     use sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create))
     sw.Write(newText)
+  
 
 let generateEffectiveReport model result resultId =
     let byteArray = File.ReadAllBytes(reportsRoot + "/" + "effective.docx")
