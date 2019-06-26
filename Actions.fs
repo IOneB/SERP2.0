@@ -275,11 +275,11 @@ let generateSecurityReport (model: APIModel) (result: list<_>) resultId =
 
     for i in [List.length result..5] do
         newText <-
-            replaceText ("f"+string i) "" newText
-            |> replaceText ("t"+string i) ""
-            |> replaceText ("tn"+string i) ""
-            |> replaceText ("e"+string i) ""
-            |> replaceText ("r"+string i) ""
+            replaceText ("f"+string i) "-" newText
+            |> replaceText ("t"+string i) "-"
+            |> replaceText ("tn"+string i) "-"
+            |> replaceText ("e"+string i) "-"
+            |> replaceText ("r"+string i) "-"
     use sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create))
     sw.Write(newText)
 
@@ -293,91 +293,68 @@ let generateProtectionReport (model: APIModel) result resultId =
     let mutable newText = docText
     for i in [0..(List.length result) - 1] do
         newText <-
-            replaceStub i "f" model.Freqs newText
-            |> replaceStub i "t" model.Tens
-            |> replaceStub i "tn" model.NoiseTens
-            |> replaceStub i "e" (fivth result).Value
-            |> replaceStub i "r" (first5 result).Value
-    (*List.iteri (fun i (rad: float<_>, k, _, ur ) -> 
-        let indexedReplaceStub = replaceStub (i+1)
-        let index = i + 1
-        newText <-
-            indexedReplaceStub "f" model.Freqs newText
-        let reg = new Regex("f" + string index)
-        newText <- reg.Replace(newText, string model.Freqs.[index])
-        let reg = new Regex("Ut" + string index)
-        newText <- reg.Replace(newText, string model.Tens.[index])
-        let reg = new Regex("Un" + string index)
-        newText <- reg.Replace(newText, string model.NoiseTens.[index])
-        let reg = new Regex("Ur" + string index)
-        newText <- reg.Replace(newText, string ur)
-        let reg = new Regex("r" + string index)
-        newText <- reg.Replace(newText, string rad)
-        let reg = new Regex("u1" + string index)
-        newText <- reg.Replace(newText, string model.U1.[index])
-        let reg = new Regex("u2" + string index)
-        newText <- reg.Replace(newText, string model.U2.[index])
-        let reg = new Regex("k" + string index)
-        newText <- reg.Replace(newText, string k)
-        ) 
-        result*)
+            newText
+            |> replaceStub i "f" model.Freqs
+            |> replaceStub i "Ut" model.Tens
+            |> replaceStub i "Un" model.NoiseTens
+            |> replaceStub i "U1" model.U1.Value
+            |> replaceStub i "U2" model.U2.Value
+            |> replaceStub i "Ur" (fourth4 result).Value
+            |> replaceStub i "K" (second4 result).Value
+            |> replaceStub i "R" (first4 result).Value
     newText <- replaceText "date" (DateTime.Now.ToLongDateString()) newText
 
     for i in [List.length result..5] do
         newText <-
-            replaceText ("f"+string i) "" newText
-            |> replaceText ("t"+string i) ""
-            |> replaceText ("tn"+string i) ""
-            |> replaceText ("e"+string i) ""
-            |> replaceText ("r"+string i) ""
+            newText
+            |> replaceText ("f"+string i) "-" 
+            |> replaceText ("Ut"+string i) "-"
+            |> replaceText ("Un"+string i) "-"
+            |> replaceText ("U1"+string i) "-"
+            |> replaceText ("U2"+string i) "-"
+            |> replaceText ("Ur"+string i) "-"
+            |> replaceText ("K"+string i) "-"
+            |> replaceText ("R"+string i) "-"
     use sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create))
     sw.Write(newText)
   
 
-let generateEffectiveReport model result resultId =
-    let byteArray = File.ReadAllBytes(reportsRoot + "/" + "effective.docx")
-    do
-        use fs = new FileStream(reportsRoot + "/" + string resultId + ".docx", FileMode.Create) 
-        use mem = new MemoryStream() 
-        mem.Write(byteArray, 0, (int)byteArray.Length) 
-        mem.WriteTo(fs) 
+let generateEffectiveReport (model: APIModel) (result: ('a*'b list* 'c list * ('f * 'i) list) list) resultId =
+    createDoc "effective" resultId
     use wordDoc = WordprocessingDocument.Open(reportsRoot + "/" + string resultId + ".docx", true)
     let docText = 
         use sr = new StreamReader(wordDoc.MainDocumentPart.GetStream())
         sr.ReadToEnd()
     let mutable newText = docText
-    List.iteri (fun i (rad: float<_>, k, _, ur ) -> 
-        let index = i + 1
-        let reg = new Regex("f" + string index)
-        newText <- reg.Replace(newText, string model.Freqs.[index])
-        let reg = new Regex("Ut" + string index)
-        newText <- reg.Replace(newText, string model.Tens.[index])
-        let reg = new Regex("Un" + string index)
-        newText <- reg.Replace(newText, string model.NoiseTens.[index])
-        let reg = new Regex("Ur" + string index)
-        newText <- reg.Replace(newText, string ur)
-        let reg = new Regex("r" + string index)
-        newText <- reg.Replace(newText, string rad)
-        let reg = new Regex("u1" + string index)
-        newText <- reg.Replace(newText, string model.U1.[index])
-        let reg = new Regex("u2" + string index)
-        newText <- reg.Replace(newText, string model.U2.[index])
-        let reg = new Regex("k" + string index)
-        newText <- reg.Replace(newText, string k)
-        ) 
+    let RList = List.init (List.length result) (fun _ -> model.R.Value)
+    let result = 
         result
-    let reg = new Regex("date")
-    newText <- reg.Replace(newText, string DateTime.Now)
-    for i in [1..5] do
-        let reg = new Regex("f" + string i)
-        newText <- reg.Replace(newText, "")
-        let reg = new Regex("t" + string i)
-        newText <- reg.Replace(newText, "")
-        let reg = new Regex("tn" + string i)
-        newText <- reg.Replace(newText, "")
-        let reg = new Regex("e" + string i)
-        newText <- reg.Replace(newText, "")
-        let reg = new Regex("r" + string i)
-        newText <- reg.Replace(newText, "")
+        |> List.map (fun (x, a, b, c) -> List.init (List.length a) (fun _ -> x), a, b, c)
+        |> List.map (fun (x, y, z, t) -> List.zip3 x y (List.map snd t))
+        |> List.fold (fun prev next -> prev @ next) []
+        |> List.sortBy (fun (_,_, i) -> i)
+    let pins = List.map (fun (d,_,_) -> if d > 0.3 then "Нет" else "Да") result
+    //F1	T1	R1	K1	D1	pin
+    for i in [0..(List.length result) - 1] do
+        newText <-
+            newText
+            |> replaceStub i "f" model.Freqs
+            |> replaceStub i "t" model.Tens
+            |> replaceStub i "r" RList
+            |> replaceStub i "k" (second3 result).Value
+            |> replaceStub i "d" (first3 result).Value
+            |> replaceText ("pin" + string (i + 1)) pins.[i]
+
+    newText <- replaceText "date" (DateTime.Now.ToLongDateString()) newText
+
+    for i in [List.length result..5] do
+        newText <-
+            newText
+            |> replaceText ("f"+string i) "-" 
+            |> replaceText ("t"+string i) "-"
+            |> replaceText ("r"+string i) "-"
+            |> replaceText ("k"+string i) "-"
+            |> replaceText ("d"+string i) "-"
+            |> replaceText ("pin"+string i) "-"
     use sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create))
     sw.Write(newText)
