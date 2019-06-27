@@ -21,6 +21,12 @@ let viewData =
         "Bar", true :> obj
     ]
 
+let resultTypeTranslator = function
+    | ResultType.Security -> "Оценка защищенности от ПЭМИ"
+    | ResultType.Protection -> "Оценка защищенности от наводок"
+    | ResultType.Effective -> "Оценка эффективности"
+    | _ -> "Unknown Methodic"
+
 let getColumns f source = Some <| List.map (fun item -> f item) source
 
 let first4 tupleList = getColumns (fun (x,_,_,_) -> x) tupleList
@@ -51,7 +57,7 @@ let authScheme = CookieAuthenticationDefaults.AuthenticationScheme
 
 let mustBeLoggedIn : HttpFunc->HttpContext->HttpFuncResult = 
     let notLoggedIn =
-        text "pls login"
+        redirectTo true "/login"
     requiresAuthentication notLoggedIn
 
 let mustBeAdmin : HttpFunc->HttpContext->HttpFuncResult = 
@@ -135,6 +141,7 @@ let effectiveDenominator (kj : float list) quality tau bandwith tens =
     quality * (radicalExpression ** 0.5)
 
 
+let round2 (x: float<_>) (c: float<_>) = Math.Round(float x, 2) * c
 
 let calcSecurity freqs tens noiseTens = 
     let input = List.zip3 freqs tens noiseTens
@@ -152,7 +159,7 @@ let calcSecurity freqs tens noiseTens =
         List.mapi (fun i (r, l1, l2, z, t, n) ->
             if r > l2 then calcRadius n t l1 l2 Zone.Far, l1, l2, Zone.Far, t
             else r, l1, l2, z, t) secondStep
-    thirdStep //радиус, границы зон, тип зоны и рассчитанное значение напряженности
+    List.map (fun (r,l1, l2, z, e) -> round2 r 1.0<M>, round2 l1 1.0<M>, round2 l2 1.0<M>, z, round2 e 1.0<mkV/M>) thirdStep //радиус, границы зон, тип зоны и рассчитанное значение напряженности
 
 
 let calcProtection freqs tens noiseTens (U1 : float<dB> list) (U2 : float<dB> list) (l : float<M> list) = 
@@ -164,7 +171,7 @@ let calcProtection freqs tens noiseTens (U1 : float<dB> list) (U2 : float<dB> li
     let withKp = List.map (fun (u1, u2, def, t, l) -> 
                         20.0<dB> * (log10 (u1 / u2)) / l, def, t) withDef
     let result = List.map (fun (k, d, t) -> 
-                        ((d + 10.0<dB>)/ k), k, d, t) withKp
+                        round2 ((d + 10.0<dB>)/ k) 1.0<M>, round2 k 1.0<dB/M>, round2 d 1.0<dB>, round2 t 1.0<dB>) withKp
     result //радиус, затухание, показатель защищенности и расчитанное значение напряжения 
 
 let calcEffective freqs tens noiseTens remoteTens (noiseGen: GeneratorParameters) = 
@@ -229,9 +236,9 @@ let calcEffective freqs tens noiseTens remoteTens (noiseGen: GeneratorParameters
             match x with
             | value when value = infinity || value = nan 
                 || (value < 0.08 || value > 1.2) -> 
-                    ((fun ((_,_,_),rt) -> convertDBtoMkV rt) input.[snd f.[0]]) / (convertDBtoMkV noiseGen.RemoteTens) |> float
-            | value -> value
-            ,y, z, f) 
+                    ((fun ((_,_,_),rt) -> convertDBtoMkV rt) input.[snd f.[0]]) / (convertDBtoMkV noiseGen.RemoteTens) |> float |> round2 <| 1.0
+            | value -> round2 value 1.0
+            ,List.map (fun i -> round2 i 1.0) y, List.map (fun i -> round2 i 1.0) z, f) 
 
 let replaceStub i stub (value: float<_> list) text =
     let value = List.map float value
@@ -251,7 +258,7 @@ let createDoc name id =
         mem.Write(byteArray, 0, (int)byteArray.Length) 
         mem.WriteTo(fs) 
 
-let generateSecurityReport (model: APIModel) (result: list<_>) resultId =
+let generateSecurityReport (model: APIModel) (result: list<_>) resultId name =
     createDoc "security" resultId
     use wordDoc = WordprocessingDocument.Open(reportsRoot + "/" + string resultId + ".docx", true)
     let docText = 
@@ -267,11 +274,12 @@ let generateSecurityReport (model: APIModel) (result: list<_>) resultId =
             |> replaceStub i "r" (first5 result).Value
 
     newText <- 
-        List.map (fun (_,_,_,_,r) -> r) result 
+        List.map (fun (r,_,_,_,_) -> r) result 
         |> List.max 
         |> string 
         |> replaceText "rmax" <| newText
         |> replaceText "date" (DateTime.Now.ToLongDateString())
+        |> replaceText "Myname" name
 
     for i in [List.length result..5] do
         newText <-
@@ -284,7 +292,7 @@ let generateSecurityReport (model: APIModel) (result: list<_>) resultId =
     sw.Write(newText)
 
 
-let generateProtectionReport (model: APIModel) result resultId =
+let generateProtectionReport (model: APIModel) result resultId name =
     createDoc "protection" resultId
     use wordDoc = WordprocessingDocument.Open(reportsRoot + "/" + string resultId + ".docx", true)
     let docText = 
@@ -302,7 +310,10 @@ let generateProtectionReport (model: APIModel) result resultId =
             |> replaceStub i "Ur" (fourth4 result).Value
             |> replaceStub i "K" (second4 result).Value
             |> replaceStub i "R" (first4 result).Value
-    newText <- replaceText "date" (DateTime.Now.ToLongDateString()) newText
+    newText <- 
+        newText
+        |> replaceText "date" (DateTime.Now.ToLongDateString())
+        |> replaceText "Myname" name
 
     for i in [List.length result..5] do
         newText <-
@@ -319,20 +330,20 @@ let generateProtectionReport (model: APIModel) result resultId =
     sw.Write(newText)
   
 
-let generateEffectiveReport (model: APIModel) (result: ('a*'b list* 'c list * ('f * 'i) list) list) resultId =
+let generateEffectiveReport model result resultId name =
     createDoc "effective" resultId
     use wordDoc = WordprocessingDocument.Open(reportsRoot + "/" + string resultId + ".docx", true)
     let docText = 
         use sr = new StreamReader(wordDoc.MainDocumentPart.GetStream())
         sr.ReadToEnd()
     let mutable newText = docText
-    let RList = List.init (List.length result) (fun _ -> model.R.Value)
     let result = 
         result
         |> List.map (fun (x, a, b, c) -> List.init (List.length a) (fun _ -> x), a, b, c)
         |> List.map (fun (x, y, z, t) -> List.zip3 x y (List.map snd t))
         |> List.fold (fun prev next -> prev @ next) []
         |> List.sortBy (fun (_,_, i) -> i)
+    let RList = List.init (List.length result) (fun _ -> model.R.Value)
     let pins = List.map (fun (d,_,_) -> if d > 0.3 then "Нет" else "Да") result
     //F1	T1	R1	K1	D1	pin
     for i in [0..(List.length result) - 1] do
@@ -345,7 +356,10 @@ let generateEffectiveReport (model: APIModel) (result: ('a*'b list* 'c list * ('
             |> replaceStub i "d" (first3 result).Value
             |> replaceText ("pin" + string (i + 1)) pins.[i]
 
-    newText <- replaceText "date" (DateTime.Now.ToLongDateString()) newText
+    newText <- 
+        newText
+        |> replaceText "date" (DateTime.Now.ToLongDateString())
+        |> replaceText "Myname" name
 
     for i in [List.length result..5] do
         newText <-

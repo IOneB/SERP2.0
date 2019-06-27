@@ -140,6 +140,23 @@ type [<CLIMutable>] APIModel =
 type [<CLIMutable>] User = { UserID:int; Name:string; Password:string; UserName: string; Role : string; Group: string}
 and [<CLIMutable>] Result = { ResultID:int; Freqs: string; Tens: string; NoiseTens: string; Count: int; UserID: int; ResultType: ResultType; ResultValues: string; U1: string; U2: string; L: string; Date: DateTime; RemoteTens: string; GeneratorParameters: string }
 
+type ResultViewModel =
+    {
+        Id: int
+        User: User
+        Date: string
+        Time: string
+        ResultType: string
+        Result: string
+        Count: int
+    }
+
+type UsersResultModelView =
+    {
+       Me: string
+       Results: ResultViewModel list 
+    }
+
 module Default = 
     let defaultUser = { UserID = 0; Name="Joe"; Password=""; UserName=""; Role="User"; Group = ""}
     let defaultResult = { ResultID = 0; Freqs = ""; Tens = ""; NoiseTens = ""; Count = 0; UserID = -1; ResultType = ResultType.Security; ResultValues = ""; U1 = ""; U2 = ""; L = ""; Date = DateTime.Now; RemoteTens = ""; GeneratorParameters = "";}

@@ -8,12 +8,12 @@ open SERP.Entities
 open Repository
 
 let adminRouter = subRoute "/admin" (choose [
-    adminRoute "/manage"           >=> warbler (fun _ -> razorHtmlView "list" (Some (allUsers())) (Some viewData) None)
+    adminRoute "/manage"           >=> warbler (fun _ -> razorHtmlView "list" (Some (allResults)) None None)
     routef "/result/%i"  getResultHandler
     ])
 
 let userRouter = subRoute "/user" (choose [
-    userRoute "/home"              >=> profileHandler
+    userRoute "/home"              >=> warbler (fun (_, ctx) -> razorHtmlView "profile" (Some (myResults ctx.User.Identity.Name)) None None)
     userRoute "/profile"           >=> redirectTo false "/user/home" 
 
     userRoute "/security"          >=> razorHtmlView "security" None None None
@@ -26,7 +26,7 @@ let userRouter = subRoute "/user" (choose [
 let webApp : HttpHandler =
     choose [
         GET >=> choose [
-            route "/"           >=> redirectTo false "/test"
+            route "/"           >=> redirectTo false "/user/home"
             route "/test"       >=> razorHtmlView "test" None None None
             route "/login"      >=> warbler (fun (next, ctx)-> (razorHtmlView "login" (None) (Some viewData) None))
             route "/logout"     >=> logoutHandler >=> redirectTo false "/login"

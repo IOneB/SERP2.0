@@ -98,7 +98,7 @@ let getResultHandler _ =
 let getUserResultHandler id next (ctx : HttpContext)=
     if Path.Combine(reportsRoot, string id + ".docx") |> File.Exists  then 
         ctx.SetContentType ("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-        (streamFile true "Reports/1.docx" None None) next ctx
+        (streamFile true (Path.Combine(reportsRoot, string id + ".docx")) None None) next ctx
     else text "404" next ctx
 
 let securityHandler (model : APIModel) : HttpHandler = 
@@ -124,12 +124,13 @@ let securityHandler (model : APIModel) : HttpHandler =
                         Count = model.Count
                         ResultValues = listToStr response.SecureResult.Value
                         UserID = (getUserByName ctx.User.Identity.Name).Value.UserID
+                        Date = response.Date.Value
                 }    
             return! (match saveResult security with
                         | (-1, _) -> 
                             parsingError "Не удалось сохранить результат, попробуйте позже"
                         | (_, id) -> 
-                            generateSecurityReport model result id
+                            generateSecurityReport model result id (getUserByName ctx.User.Identity.Name).Value.Name
                             json {response with Id = Some id}) next ctx
         }
 
@@ -159,14 +160,14 @@ let protectionHandler (model:APIModel) : HttpHandler =
                         Count = model.Count
                         ResultValues = listToStr response.ProtectionResult.Value
                         UserID = (getUserByName ctx.User.Identity.Name).Value.UserID
+                        Date = response.Date.Value
                 }    
-            return! json {response with Id = Some 1} next ctx
-                (*match saveResult protection with
-                    | (-1, _) -> 
-                        parsingError "Не удалось сохранить результат, попробуйте позже"
-                    | (_, id) -> 
-                        generateProtectionReport model result id
-                        json {response with Id = Some id}*) 
+            return! (match saveResult protection with
+                        | (-1, _) -> 
+                            parsingError "Не удалось сохранить результат, попробуйте позже"
+                        | (_, id) -> 
+                            generateProtectionReport model result id (getUserByName ctx.User.Identity.Name).Value.Name
+                            json {response with Id = Some id})  next ctx
         }
 
 let effectiveHandler (model:APIModel) : HttpHandler =
@@ -194,11 +195,11 @@ let effectiveHandler (model:APIModel) : HttpHandler =
                         Count = model.Count
                         ResultValues = listToStr response.EffectiveResult.Value
                         UserID = (getUserByName ctx.User.Identity.Name).Value.UserID
+                        Date = response.Date.Value
                 }    
-            return! json {response with Id = Some 1} next ctx
-                (*match saveResult effective with
-                    | (-1, _) -> parsingError "Не удалось сохранить результат, попробуйте позже"
-                    | (_, id) -> 
-                        generateEffectiveReport model result id
-                        json {response with Id = Some id}*) 
+            return! (match saveResult effective with
+                        | (-1, _) -> parsingError "Не удалось сохранить результат, попробуйте позже"
+                        | (_, id) -> 
+                            generateEffectiveReport model result id (getUserByName ctx.User.Identity.Name).Value.Name
+                            json {response with Id = Some id}) next ctx
         }

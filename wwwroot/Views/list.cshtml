@@ -1,6 +1,6 @@
 ﻿
 @using SERP.Entities
-@model IEnumerable<User>
+@model IEnumerable<ResultViewModel>
 
     @{
     Layout = "_Layout";
@@ -53,13 +53,13 @@
                             @foreach(var result in Model)
                             {
                             <tr>
-                                <td>@result.UserName</td>
-                                <td>@result.Group</td>
-                                <td>@result.Name</td>
-                                <td>@DateTime.Now.ToShortDateString()</td>
-                                <td>@DateTime.Now.ToLongTimeString()</td>
-                                <td><a href="/admin/result/@result.UserID" class="text-primary">Скачать</a></td>
-                                <td>Нет</td>
+                                <td>@result.User.UserName</td>
+                                <td>@result.User.Group</td>
+                                <td>@result.User.Name</td>
+                                <td>@result.Date</td>
+                                <td>@result.Time</td>
+                                <td><a href="/user/result/@result.Id" class="text-primary">Скачать</a></td>
+                                <td>@(result.User.Role == "Admin"? "Да" : "Нет")</td>
                             </tr>
                             }
                         </tbody>
