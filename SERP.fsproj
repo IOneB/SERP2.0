@@ -156,16 +156,16 @@
     <Content Remove="wwwroot\scss\_custom-skin.scss" />
     <Content Remove="wwwroot\scss\_custom-styles.scss" />
     <Content Remove="wwwroot\scss\_custom-variables.scss" />
+    <Content Remove="wwwroot\Views\about.cshtml" />
+    <Content Remove="wwwroot\Views\Components\1.html" />
+    <Content Remove="wwwroot\Views\Components\2.cshtml" />
+    <Content Remove="wwwroot\Views\Components\3.svg" />
+    <Content Remove="wwwroot\Views\Components\4.cshtml" />
+    <Content Remove="wwwroot\Views\Components\5.cshtml" />
+    <Content Remove="wwwroot\Views\Components\6.cshtml" />
+    <Content Remove="wwwroot\Views\Components\7.cshtml" />
+    <Content Remove="wwwroot\Views\Components\8.cshtml" />
     <Content Remove="wwwroot\Views\Components\about.cshtml" />
-    <Content Remove="wwwroot\Views\Components\admin.cshtml" />
-    <Content Remove="wwwroot\Views\Components\admin2.cshtml" />
-    <Content Remove="wwwroot\Views\Components\alert.cshtml" />
-    <Content Remove="wwwroot\Views\Components\AuthorizeCard.cshtml" />
-    <Content Remove="wwwroot\Views\Components\carusel.cshtml" />
-    <Content Remove="wwwroot\Views\Components\empire.svg" />
-    <Content Remove="wwwroot\Views\Components\inputs.cshtml" />
-    <Content Remove="wwwroot\Views\Components\main.cshtml" />
-    <Content Remove="wwwroot\Views\Components\sample.html" />
   </ItemGroup>
 
   <ItemGroup>
@@ -340,22 +340,26 @@
     <None Include="wwwroot\scss\_custom-skin.scss" />
     <None Include="wwwroot\scss\_custom-styles.scss" />
     <None Include="wwwroot\scss\_custom-variables.scss" />
+    <None Include="wwwroot\Views\about.cshtml" />
     <None Include="wwwroot\Views\Components\about.cshtml" />
-    <None Include="wwwroot\Views\Components\admin.cshtml" />
-    <None Include="wwwroot\Views\Components\admin2.cshtml" />
-    <None Include="wwwroot\Views\Components\alert.cshtml" />
-    <None Include="wwwroot\Views\Components\AuthorizeCard.cshtml" />
-    <None Include="wwwroot\Views\Components\carusel.cshtml" />
-    <None Include="wwwroot\Views\Components\empire.svg" />
-    <None Include="wwwroot\Views\Components\inputs.cshtml" />
-    <None Include="wwwroot\Views\Components\main.cshtml" />
-    <None Include="wwwroot\Views\Components\sample.html" />
+    <None Include="wwwroot\Views\Components\8.cshtml" />
+    <None Include="wwwroot\Views\Components\7.cshtml" />
+    <None Include="wwwroot\Views\Components\6.cshtml" />
+    <None Include="wwwroot\Views\Components\5.cshtml" />
+    <None Include="wwwroot\Views\Components\4.cshtml" />
+    <None Include="wwwroot\Views\Components\3.svg" />
+    <None Include="wwwroot\Views\Components\2.cshtml" />
+    <None Include="wwwroot\Views\Components\1.html" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="Entities\Entities.fsproj" />
     <ProjectReference Include="Models\DbContext.csproj" />
     <ProjectReference Include="UI\UI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Theory\" />
   </ItemGroup>
 
 </Project>

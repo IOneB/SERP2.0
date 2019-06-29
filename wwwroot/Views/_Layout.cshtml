@@ -36,6 +36,36 @@
                                     <li>
                                         <a href="/recommend/theory" class="waves-effect">Теория</a>
                                     </li>
+                                    <li>
+                                        <a href="/recommend/security" class="waves-effect">Методика 1</a>
+                                    </li>
+                                    <li>
+                                        <a href="/recommend/protection" class="waves-effect">Методика 2</a>
+                                    </li>
+                                    <li>
+                                        <a href="/recommend/effective" class="waves-effect">Методика 3</a>
+                                    </li>
+                                    <li>
+                                        <a href="/recommend/organization" class="waves-effect">Организационные меры</a>
+                                    </li>
+                                    <li>
+                                        <a href="/recommend/active" class="waves-effect">Активные меры</a>
+                                    </li>
+                                    <li>
+                                        <a href="/recommend/passive" class="waves-effect">Пассивные меры</a>
+                                    </li>
+                                    <li>
+                                        <a href="/recommend/protocols" class="waves-effect">Протоколы</a>
+                                    </li>
+                                    <li>
+                                        <a href="/recommend/secure_hardware" class="waves-effect">Техника</a>
+                                    </li>
+                                    <li>
+                                        <a href="/recommend/test" class="waves-effect">Тестовый режим</a>
+                                    </li>
+                                    <li>
+                                        <a href="/recommend/summary" class="waves-effect">Методические рекомендации</a>
+                                    </li>
                                 </ul>
                             </div>
                         </li>
@@ -62,6 +92,12 @@
                             <a href="/admin/manage" class="collapsible-header waves-effect"><i class="fas fa-toolbox"></i>Администрирование</a>
                         </li>
                         }
+                        <li>
+                            <a href="/about" class="collapsible-header waves-effect"><i class="fas fa-address-book"></i>Описание</a>
+                        </li>
+                        <li>
+                            <a href="/literature" class="collapsible-header waves-effect"><i class="fas fa-book-open"></i>Рекомендуемая литература</a>
+                        </li>
                     </ul>
 
                 </li>
@@ -80,9 +116,7 @@
 
             <div class="d-flex change-mode">
 
-                <div class="ml-auto mb-0 mr-3 change-mode-wrapper">
-                    <button class="btn btn-sm waves-effect waves-light dark-grey-text text-white white text-dark" id="dark-mode">Change Mode</button>
-                </div>
+
 
                 <ul class="nav navbar-nav nav-flex-icons ml-auto">
                     @if (User.Identity.IsAuthenticated)
@@ -151,28 +185,6 @@
             $('[data-toggle="tooltip"]').tooltip();
             }
         );
-
-    </script>
-    <script>
-        $(function () {
-            $('#dark-mode').on('click', function (e) {
-
-                e.preventDefault();
-                $('h4, button').not('.check').toggleClass('dark-grey-text text-white');
-                $('.list-panel a').toggleClass('dark-grey-text');
-
-                $('footer, .card').toggleClass('dark-card-admin');
-                $('body, .navbar').toggleClass('white-skin navy-blue-skin');
-                $(this).toggleClass('white text-dark btn-outline-black');
-                $('body').toggleClass('dark-bg-admin');
-                $('h6, .card, p, td, th, i, li a, h4, input, label').not(
-                    '#slide-out i, #slide-out a, .dropdown-item i, .dropdown-item').toggleClass('text-white');
-                $('.btn-dash').toggleClass('grey blue').toggleClass('lighten-3 darken-3');
-                $('.gradient-card-header').toggleClass('white black lighten-4');
-                $('.list-panel a').toggleClass('navy-blue-bg-a text-white').toggleClass('list-group-border');
-
-            });
-        });
 
     </script>
     @RenderSection("customScripts", false);

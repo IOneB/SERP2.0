@@ -52,6 +52,7 @@ let time() = System.DateTime.Now.ToString()
 let currentDirectory = Directory.GetCurrentDirectory()
 let webRoot = Path.Combine(currentDirectory, @"wwwroot")
 let reportsRoot = Path.Combine(webRoot, "Reports")
+let theoryRoot = Path.Combine(webRoot, "Theory")
 
 let authScheme = CookieAuthenticationDefaults.AuthenticationScheme
 

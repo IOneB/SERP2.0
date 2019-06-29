@@ -1,4 +1,5 @@
-﻿@model object
+﻿@using SERP.Entities
+@model Recommend
 
 @{
     Layout = "_Layout";
@@ -7,18 +8,19 @@
 <style>
     .doc {
         width: 100%;
-        height: 650px;
+        height: 630px;
     }
 </style>
 <section>
-
-    <!-- Gird column -->
     <div class="card card-cascade narrower z-depth-0 dark-card-admin text-white" style="padding:15px">
+        <section class="">
+            <h1 class="float-left text-white">@Model.Head</h1>
+            <button id="download-button" type="button" style="margin:20px;" onclick="window.open('/recommend/download/@Model.Name')" class="btn btn-indigo waves-effect float-right waves-light">Скачать</button>
+        </section>
         <div class="px-4">
-            <iframe class="doc"
-                    src="https://docs.google.com/gview?url=http://writing.engr.psu.edu/workbooks/formal_report_template.doc&embedded=true"></iframe>
-    </div>
+            <embed class="doc" src=@("/theorypfd/" + @Model.Name + ".pdf")>
         </div>
+    </div>
 
 </section>
 

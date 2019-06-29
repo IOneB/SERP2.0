@@ -157,6 +157,8 @@ type UsersResultModelView =
        Results: ResultViewModel list 
     }
 
+type Recommend = {Url: string; Name: string; Head: string}
+
 module Default = 
     let defaultUser = { UserID = 0; Name="Joe"; Password=""; UserName=""; Role="User"; Group = ""}
     let defaultResult = { ResultID = 0; Freqs = ""; Tens = ""; NoiseTens = ""; Count = 0; UserID = -1; ResultType = ResultType.Security; ResultValues = ""; U1 = ""; U2 = ""; L = ""; Date = DateTime.Now; RemoteTens = ""; GeneratorParameters = "";}
@@ -173,4 +175,4 @@ module Default =
     let strToGen (str: string) = 
         let pars = str.Split(';')
         {tau =  1.0<s> * float pars.[0] ; R = 1.0<M> * float pars.[1]; Tension = 1.0<dB> * float pars.[2]; RemoteTens = 1.0<dB> * float pars.[3]; Frequency = 1.0<MHz> * float pars.[4]; Quality = 1.0 * float pars.[5]; BandWith = 1.0<MHz> * float pars.[6]}
-        
+       

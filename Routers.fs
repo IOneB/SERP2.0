@@ -27,25 +27,22 @@ let webApp : HttpHandler =
     choose [
         GET >=> choose [
             route "/"           >=> redirectTo false "/user/home"
-            route "/test"       >=> razorHtmlView "test" None None None
             route "/login"      >=> warbler (fun (next, ctx)-> (razorHtmlView "login" (None) (Some viewData) None))
             route "/logout"     >=> logoutHandler >=> redirectTo false "/login"
+            route "/about"      >=> razorHtmlView "about" None None None
+            route "/literature" >=> razorHtmlView "literature" None None None
 
             adminRouter 
             userRouter
 
-            subRoute "/recommend" (choose [
-                userRoute "/theory"     >=> razorHtmlView "theory" None None None
-                userRoute "/method"     >=> razorHtmlView "theory" None None None
-                userRoute "/recommend"     >=> razorHtmlView "theory" None None None
-                userRoute "/literature" >=> razorHtmlView "literature" None None None
-                ])
+            routef "/recommend/download/%s" downloadRecommendHandler
+            routef "/recommend/%s"  recommendHandler
         ]
 
         POST >=> choose [
             route "/login"        >=> tryBindForm<LoginModel> parsingError None (validateModel loginHandler)
             route "/register"     >=> tryBindForm<RegisterModel> parsingError (Some russian) (validateModel registerHandler)
-            route "/result"       >=> tryBindForm<RegisterModel>   parsingError None (registerHandler) //TODO:
+            route "/result"       >=> tryBindForm<RegisterModel>  parsingError None (registerHandler)
 
             route "/security"     >=> tryBindForm<APIModel> parsingError None (validateModel securityHandler)
             route "/protection"   >=> tryBindForm<APIModel> parsingError None (validateModel protectionHandler)

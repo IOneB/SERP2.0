@@ -97,8 +97,8 @@
 
         <!--Частоты-->
         <div class="pb-5">
-            <h5 style="display:inline-block">Частоты (МГц)</h5>
-            <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
+            <h5 style="display:inline-block">Частоты</h5>
+            <i data-toggle="tooltip" data-placement="right" title="Частоты на которых проводились измерения характеристик поля (МГц)" class="fas fa-question-circle"> </i>
         </div>
 
         <div class="row">
@@ -115,7 +115,7 @@
 
         <div class="pb-5">
             <h5 style="display:inline-block">Напряженность поля помех</h5>
-            <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
+            <i data-toggle="tooltip" data-placement="right" title="Основная характеристика электрического и магнитного полей. Измеряется в дБ при выключенном тестовом и шумовом сигналах" class="fas fa-question-circle"> </i>
         </div>
         <div class="row">
             @for (int i = 1; i <= 5; i++){
@@ -133,7 +133,7 @@
             <div class="col-md-6 mb-6">
                 <div class="pb-5">
                     <h5 style="display:inline-block">Напряженности поля тестового сигнала</h5>
-                    <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
+                    <i data-toggle="tooltip" data-placement="right" title="Напряженность поля, являющегося совокупность создаваемого информативным сигналом (в виде тестового) и поля помех (при выключенном шумовом). Измеряется в дБ" class="fas fa-question-circle"> </i>
                 </div>
 
                 <div class="row ">
@@ -151,7 +151,7 @@
             <div class="col-md-6 mb-6">
                 <div class="pb-5">
                     <h5 style="display:inline-block">Напряженности на границе КЗ</h5>
-                    <i data-toggle="tooltip" data-placement="right" title="Параметр отвечает за..." class="fas fa-question-circle"> </i>
+                    <i data-toggle="tooltip" data-placement="right" title="Напряженность смеси тестового и помехового сигналов на границе КЗ. Выбирается ближайшая точка к границе" class="fas fa-question-circle"> </i>
                 </div>
 
                 <div class="row">
@@ -185,7 +185,7 @@
 
         @for (int i = 1; i <= 5; i++){
         <div class="row @String.Join(" ", Enumerable.Range(i, 6-i).Select(item => " answer" + item))" style="display:none;">
-            <div class="col-lg-8 col-md-8 mb-8">
+            <div class="col-lg-8 col-md-8 mb-8 row">
                 <h3>Решение для @i набора частот</h3>
                 <p>Показатель эффективности защиты: <span id="result-@i"></span></p>
                 <div class="text-center">
