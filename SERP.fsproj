@@ -10,7 +10,9 @@
 
   <ItemGroup>
     <Content Remove="UI\**" />
+    <Content Remove="wwwroot\Views\Components\**" />
     <EmbeddedResource Remove="UI\**" />
+    <EmbeddedResource Remove="wwwroot\Views\Components\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -157,15 +159,6 @@
     <Content Remove="wwwroot\scss\_custom-styles.scss" />
     <Content Remove="wwwroot\scss\_custom-variables.scss" />
     <Content Remove="wwwroot\Views\about.cshtml" />
-    <Content Remove="wwwroot\Views\Components\1.html" />
-    <Content Remove="wwwroot\Views\Components\2.cshtml" />
-    <Content Remove="wwwroot\Views\Components\3.svg" />
-    <Content Remove="wwwroot\Views\Components\4.cshtml" />
-    <Content Remove="wwwroot\Views\Components\5.cshtml" />
-    <Content Remove="wwwroot\Views\Components\6.cshtml" />
-    <Content Remove="wwwroot\Views\Components\7.cshtml" />
-    <Content Remove="wwwroot\Views\Components\8.cshtml" />
-    <Content Remove="wwwroot\Views\Components\about.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -341,15 +334,6 @@
     <None Include="wwwroot\scss\_custom-styles.scss" />
     <None Include="wwwroot\scss\_custom-variables.scss" />
     <None Include="wwwroot\Views\about.cshtml" />
-    <None Include="wwwroot\Views\Components\about.cshtml" />
-    <None Include="wwwroot\Views\Components\8.cshtml" />
-    <None Include="wwwroot\Views\Components\7.cshtml" />
-    <None Include="wwwroot\Views\Components\6.cshtml" />
-    <None Include="wwwroot\Views\Components\5.cshtml" />
-    <None Include="wwwroot\Views\Components\4.cshtml" />
-    <None Include="wwwroot\Views\Components\3.svg" />
-    <None Include="wwwroot\Views\Components\2.cshtml" />
-    <None Include="wwwroot\Views\Components\1.html" />
   </ItemGroup>
 
   <ItemGroup>

@@ -39,47 +39,6 @@ open System
 type ResultType = Security = 0 | Protection = 1| Effective = 2
 type Zone = Near = 0 | Intermediate = 1 | Far = 2
 
-type [<CLIMutable>] RegisterModel = 
-    {
-        UserName : string
-        Password : string
-        ConfirmPassword : string
-        Name : string
-        Group : option<string>
-        TeacherCode : option<string>
-    }
-
-    member this.HasErrors() =
-        if      this.UserName.Length < 5                then Some "Имя пользователя должно быть не менее 5 символов."
-        else if this.Password.Length  < 3               then Some "Слишком короткий пароль."
-        else if this.Password.Length  > 20              then Some "Слишком длинный пароль."
-        else if this.Password <> this.ConfirmPassword   then Some "Пароли не совпадают."
-        else if this.Name.Length < 3                    then Some "Слишком короткое имя."
-        else                                                 None
-
-    interface IModelValidation<RegisterModel> with
-        member this.Validate() =
-            match this.HasErrors() with
-            | Some msg -> Error (RequestErrors.badRequest (text msg))
-            | None     -> Ok this
-
-type [<CLIMutable>] LoginModel = 
-    { 
-        UserName : string
-        Password : string 
-    }
-
-    member this.HasErrors() =
-        if      this.UserName.Length = 0                then Some "Введите имя пользователя."
-        else if this.Password.Length = 0                then Some "Введите пароль."
-        else None
-
-    interface IModelValidation<LoginModel> with
-        member this.Validate() =
-            match this.HasErrors() with
-            | Some msg -> Error (RequestErrors.badRequest (text msg))
-            | None     -> Ok this
-
 type GeneratorParameters = 
     {
         tau: float<s>

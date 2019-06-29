@@ -56,17 +56,6 @@ let theoryRoot = Path.Combine(webRoot, "Theory")
 
 let authScheme = CookieAuthenticationDefaults.AuthenticationScheme
 
-let mustBeLoggedIn : HttpFunc->HttpContext->HttpFuncResult = 
-    let notLoggedIn =
-        redirectTo true "/login"
-    requiresAuthentication notLoggedIn
-
-let mustBeAdmin : HttpFunc->HttpContext->HttpFuncResult = 
-    let notAdmin =
-        RequestErrors.FORBIDDEN
-            "Permission denied. You must be an admin."
-    requiresRole "Admin" notAdmin
-
 let errorHandler (ex : Exception) (logger : ILogger) =
     logger.LogError(EventId(), ex, "An unhandled exception has occurred while executing the request.")
     clearResponse
@@ -77,11 +66,6 @@ let modelState = ModelStateDictionary()
 let russian = CultureInfo.CreateSpecificCulture("ru-ru")
 let parsingError (err : string) = 
     RequestErrors.BAD_REQUEST err
-
-
-let setRole = function 
-    |Some "f4df6a5d99" -> "Admin"
-    |_ -> "User"
 
 let GetHash (secret: string) =
     use md5 = System.Security.Cryptography.MD5.Create()

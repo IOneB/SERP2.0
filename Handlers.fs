@@ -16,9 +16,6 @@ open SERP.Entities
 open SERP.Entities.Default
 open SERP.Entities.Measure
 
-let userRoute routequery = route routequery >=> mustBeLoggedIn
-let adminRoute routequery = userRoute routequery >=> mustBeAdmin
-
 let textAndLog txt log : HttpHandler =
     handleContext(
         fun ctx ->
@@ -28,69 +25,9 @@ let textAndLog txt log : HttpHandler =
                 return! ctx.WriteTextAsync txt
             })
 
-let loginHandler (model : LoginModel) =
-    fun (next : HttpFunc) (ctx : HttpContext) ->
-        task{
-            let user = getUserByName model.UserName
-            let claimCookie value = 
-                let issuer = "SERP"
-                let claims =
-                    [
-                        Claim(ClaimTypes.Name, value.UserName,  ClaimValueTypes.String, issuer)
-                        Claim(ClaimTypes.Role, value.Role, ClaimValueTypes.String, issuer)
-                    ]
-                let identity = ClaimsIdentity(claims, authScheme)
-                let user     = ClaimsPrincipal(identity)
-                ctx.SignInAsync(authScheme, user).Start |> ignore 
-                text "Successfully logged in"
-            return! 
-                (match user with
-                    |Some value when value.Password = GetHash model.Password -> claimCookie value
-                    | _ -> parsingError "Неверный логин или пароль") next ctx
-        }
-    
-let registerHandler (model : RegisterModel ) =  
-    fun (next : HttpFunc) (ctx : HttpContext) ->
-        task{
-            if checkUserByName model.UserName then 
-                return! parsingError "Пользователь с таким именем уже существует" next ctx
-            else 
-                let checkSave = function 
-                    | -1 -> parsingError "Some shit happens" 
-                    | _ -> text "All good"
-                let claimCookie value = 
-                    let issuer = "SERP"
-                    let claims =
-                        [
-                            Claim(ClaimTypes.Name, value.UserName,  ClaimValueTypes.String, issuer)
-                            Claim(ClaimTypes.Role, value.Role, ClaimValueTypes.String, issuer)
-                         ]
-                    let identity = ClaimsIdentity(claims, authScheme)
-                    let user     = ClaimsPrincipal(identity)
-                    ctx.SignInAsync(authScheme, user).Start |> ignore 
-                    text "Successfully logged in"
-                let creationResult = createUser model
-                match getUserByName model.UserName with
-                    | Some value ->  claimCookie(value) |> ignore
-                    | _ -> ignore |> ignore
-                return! checkSave creationResult next ctx
-        }
-
-let userHandler =
-    fun (next : HttpFunc) (ctx : HttpContext) ->
-        task { return! text ctx.User.Identity.Name next ctx}
-
-let logoutHandler = 
-    fun (next : HttpFunc) (ctx: HttpContext) ->
-        ctx.SignOutAsync(authScheme) |> ignore
-        setStatusCode 200 next ctx
-
 let profileHandler : HttpHandler =
     fun next ctx ->
-        let safeUser = function
-            |Some value -> value
-            |None -> SERP.Entities.Default.defaultUser
-        razorHtmlView "profile" (Some (safeUser (getUserByName ctx.User.Identity.Name))) None None next ctx
+        razorHtmlView "profile" (Some Repository.user) None None next ctx
 
 let getResultHandler _ =
     text "Ok"
@@ -123,14 +60,14 @@ let securityHandler (model : APIModel) : HttpHandler =
                         NoiseTens = listToStr model.NoiseTens
                         Count = model.Count
                         ResultValues = listToStr response.SecureResult.Value
-                        UserID = (getUserByName ctx.User.Identity.Name).Value.UserID
+                        UserID = user.UserID
                         Date = response.Date.Value
                 }    
             return! (match saveResult security with
                         | (-1, _) -> 
                             parsingError "Не удалось сохранить результат, попробуйте позже"
                         | (_, id) -> 
-                            generateSecurityReport model result id (getUserByName ctx.User.Identity.Name).Value.Name
+                            generateSecurityReport model result id user.Name
                             json {response with Id = Some id}) next ctx
         }
 
@@ -159,14 +96,14 @@ let protectionHandler (model:APIModel) : HttpHandler =
                         L = listToStr response.L.Value
                         Count = model.Count
                         ResultValues = listToStr response.ProtectionResult.Value
-                        UserID = (getUserByName ctx.User.Identity.Name).Value.UserID
+                        UserID = user.UserID
                         Date = response.Date.Value
                 }    
             return! (match saveResult protection with
                         | (-1, _) -> 
                             parsingError "Не удалось сохранить результат, попробуйте позже"
                         | (_, id) -> 
-                            generateProtectionReport model result id (getUserByName ctx.User.Identity.Name).Value.Name
+                            generateProtectionReport model result id user.Name
                             json {response with Id = Some id})  next ctx
         }
 
@@ -194,13 +131,13 @@ let effectiveHandler (model:APIModel) : HttpHandler =
                         GeneratorParameters = parseGen generator
                         Count = model.Count
                         ResultValues = listToStr response.EffectiveResult.Value
-                        UserID = (getUserByName ctx.User.Identity.Name).Value.UserID
+                        UserID = user.UserID
                         Date = response.Date.Value
                 }    
             return! (match saveResult effective with
                         | (-1, _) -> parsingError "Не удалось сохранить результат, попробуйте позже"
                         | (_, id) -> 
-                            generateEffectiveReport model result id (getUserByName ctx.User.Identity.Name).Value.Name
+                            generateEffectiveReport model result id user.Name
                             json {response with Id = Some id}) next ctx
         }
 

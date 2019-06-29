@@ -119,23 +119,15 @@
 
 
                 <ul class="nav navbar-nav nav-flex-icons ml-auto">
-                    @if (User.Identity.IsAuthenticated)
-                    {
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle noclose waves-effect text-white" href="#" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             <i class="fas fa-user text-white"></i> <span class="clearfix d-none d-sm-inline-block">Профиль</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                             <a class="dropdown-item waves-effect waves-light" href="/user/home">Мой аккаунт</a>
-                            <a class="dropdown-item waves-effect waves-light" href="/logout">Выйти</a>
+                            <a class="dropdown-item waves-effect waves-light" onclick="open(location, '_self').close();">Выйти</a>
                         </div>
                     </li>
-                    }
-                    else{
-                    <li class="nav-item">
-                        <a href="/login" class="nav-link waves-effect"><i class="far fa-user"></i> <span class="clearfix d-none d-sm-inline-block">Войдите для продолжения</span></a>
-                    </li>
-                    }
                 </ul>
 
             </div>
@@ -185,7 +177,6 @@
             $('[data-toggle="tooltip"]').tooltip();
             }
         );
-
     </script>
     @RenderSection("customScripts", false);
 </body>
